@@ -45,7 +45,7 @@ fun LoginScreen(navController:NavController){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreenGenerate(navController:NavController){
+private fun LoginScreenGenerate(navController:NavController){
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -102,7 +102,7 @@ fun LoginScreenGenerate(navController:NavController){
         Button(
             onClick = {
 
-
+                navController.navigate("main_screen")
                       //giriş fonksiyonu yazılacak
             },
             shape = RoundedCornerShape(8.dp),
@@ -129,6 +129,6 @@ fun LoginScreenGenerate(navController:NavController){
 }
 @Preview(showBackground = true)
 @Composable
-fun LoginScreenPreview() {
+private fun LoginScreenPreview() {
     LoginScreenGenerate(navController = NavController(LocalContext.current))
 }

@@ -17,6 +17,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.kunapp.ui.theme.KunappTheme
 import com.example.kunapp.view.LoginScreen
+import com.example.kunapp.view.MainScreen
 import com.example.kunapp.view.RegisterScreen
 
 class MainActivity : ComponentActivity() {
@@ -28,6 +29,7 @@ class MainActivity : ComponentActivity() {
                 NavHost(navController = navController, startDestination = "login_screen") {
                     composable("login_screen") { LoginScreen(navController = navController)}
                     composable("register_screen") { RegisterScreen(navController = navController) }
+                    composable("main_screen") { MainScreen(navController = navController) }
 
                 }
             }

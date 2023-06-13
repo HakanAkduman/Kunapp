@@ -39,7 +39,7 @@ fun RegisterScreen(navController: NavController){
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScreenRegisterGenerate(navController: NavController){
+private fun ScreenRegisterGenerate(navController: NavController){
 
     var email by remember { mutableStateOf("") }
     var password1 by remember { mutableStateOf("") }
@@ -119,6 +119,6 @@ fun ScreenRegisterGenerate(navController: NavController){
 }
 @Preview(showBackground = true)
 @Composable
-fun ScreenPreview() {
+private fun ScreenPreview() {
     ScreenRegisterGenerate(NavController(LocalContext.current))
 }
