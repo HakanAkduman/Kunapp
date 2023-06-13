@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1026057560712",
+    "project_id": "kunapp-17107",
+    "storage_bucket": "kunapp-17107.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1026057560712:android:2fdc4a41f56082984af53d",
+        "android_client_info": {
+          "package_name": "com.example.kunapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1026057560712-hqartgco7bsnbntna0lvuh1t570m32k4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAUyHaWbdxkvqcFFoKi0gB3qgfbxm-iWUU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1026057560712-hqartgco7bsnbntna0lvuh1t570m32k4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

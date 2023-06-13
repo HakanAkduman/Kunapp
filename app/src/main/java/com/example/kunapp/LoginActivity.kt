@@ -19,9 +19,12 @@ import com.example.kunapp.ui.theme.KunappTheme
 import com.example.kunapp.view.LoginScreen
 import com.example.kunapp.view.MainScreen
 import com.example.kunapp.view.RegisterScreen
+import com.google.firebase.ktx.Firebase
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        
         super.onCreate(savedInstanceState)
         setContent {
             KunappTheme {
