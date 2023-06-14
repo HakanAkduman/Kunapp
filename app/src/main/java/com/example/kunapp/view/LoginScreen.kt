@@ -32,8 +32,11 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStore
 import androidx.navigation.NavController
 import com.example.kunapp.R
+import com.example.kunapp.viewmodel.LoginScreenViewModel
 
 @Composable
 fun LoginScreen(navController:NavController){
@@ -45,7 +48,7 @@ fun LoginScreen(navController:NavController){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun LoginScreenGenerate(navController:NavController){
+private fun LoginScreenGenerate(navController:NavController,viewModel: LoginScreenViewModel = LoginScreenViewModel()){
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -101,9 +104,9 @@ private fun LoginScreenGenerate(navController:NavController){
 
         Button(
             onClick = {
-
+                viewModel.Login(email, password = password)
                 navController.navigate("main_screen")
-                      //giriş fonksiyonu yazılacak
+
             },
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier.fillMaxWidth().padding(top = 50.dp, start = 50.dp,end=50.dp)
