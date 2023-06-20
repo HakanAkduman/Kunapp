@@ -1,24 +1,38 @@
 package com.example.kunapp.viewmodel
 
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
 
-class RegisterScreenViewModel():ViewModel() {
-    var isLoading= mutableStateOf(false)
-    var isSuccess= mutableStateOf(false)
-    var isError= mutableStateOf(false)
+class RegisterScreenViewModel:ViewModel() {
+    private val _isLoading = MutableLiveData(false)
+    private val _isSuccess = MutableLiveData(false)
+    private val _isError = MutableLiveData("")
 
-    var auth: FirebaseAuth = FirebaseAuth.getInstance()
+    val isLoading: LiveData<Boolean> = _isLoading
+    val isSuccess: LiveData<Boolean> = _isSuccess
+    val isError: LiveData<String> = _isError
 
-    fun Register(email:String,password:String){
-        isLoading.value=true
-        auth.createUserWithEmailAndPassword(email,password).addOnFailureListener {
-            isLoading.value=false
-            isError.value=true
-        }.addOnSuccessListener {
-            isLoading.value=false
-            isSuccess.value=true
-        }
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+
+    fun register(email: String, password: String, nick: String) {
+        _isLoading.value = true
+
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnFailureListener { exception ->
+                _isLoading.value = false
+                _isError.value = exception.localizedMessage
+            }
+            .addOnSuccessListener {
+                _isLoading.value = false
+                _isSuccess.value = true
+
+            }
+            .addOnCompleteListener {
+                _isLoading.value = false
+            }
     }
 }

@@ -53,6 +53,9 @@ private fun LoginScreenGenerate(navController:NavController,viewModel: LoginScre
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisibility by remember { mutableStateOf(false) }
+    var emailEmpty by remember{ mutableStateOf(false) }
+    var passwordEmpty by remember{ mutableStateOf(false) }
+
 
     Column(
         modifier = Modifier
@@ -69,7 +72,7 @@ private fun LoginScreenGenerate(navController:NavController,viewModel: LoginScre
             value = email,
             onValueChange = { email = it },
             label = { Text(text = "E-posta") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(), isError = emailEmpty
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -81,7 +84,7 @@ private fun LoginScreenGenerate(navController:NavController,viewModel: LoginScre
                 onValueChange = { password = it },
                 label = { Text(text = "Şifre") },
                 visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(), isError = passwordEmpty
             )
 
             IconButton(
@@ -104,8 +107,20 @@ private fun LoginScreenGenerate(navController:NavController,viewModel: LoginScre
 
         Button(
             onClick = {
-                viewModel.Login(email, password = password)
-                navController.navigate("main_screen")
+                emailEmpty=false
+                passwordEmpty=false
+
+                if(email.isNullOrEmpty()){
+                    emailEmpty=true
+                }
+                if(password.isNullOrEmpty()){
+                    passwordEmpty=true
+                }
+                if(!emailEmpty&&!passwordEmpty){
+                    viewModel.Login(email, password = password, navController = navController)
+                }
+
+
 
             },
             shape = RoundedCornerShape(8.dp),
@@ -129,6 +144,10 @@ private fun LoginScreenGenerate(navController:NavController,viewModel: LoginScre
 
 
     }
+
+
+
+
 }
 @Preview(showBackground = true)
 @Composable

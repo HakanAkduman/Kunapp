@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
 
 
@@ -16,7 +17,7 @@ class LoginScreenViewModel():ViewModel() {
 
     var auth:FirebaseAuth = FirebaseAuth.getInstance()
 
-    fun Login(email:String,password:String){
+    fun Login(email:String,password:String,navController: NavController){
         isLoading.value=true
         println("fonksiyona girildi")
         auth.signInWithEmailAndPassword(email,password).addOnFailureListener {
@@ -25,6 +26,7 @@ class LoginScreenViewModel():ViewModel() {
         }.addOnSuccessListener {
             isLoading.value=false
             isSuccess.value=true
+            navController.navigate("main_screen")
         }
     }
 
