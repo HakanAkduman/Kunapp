@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,6 +38,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import coil.size.Size
 import com.example.kunapp.viewmodel.RegisterScreenViewModel
+import okio.utf8Size
+import org.intellij.lang.annotations.Language
+import java.util.Locale
 
 @Composable
 fun RegisterScreen(navController: NavController) {
@@ -45,7 +49,8 @@ fun RegisterScreen(navController: NavController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ScreenRegisterGenerate(navController: NavController, viewModel: RegisterScreenViewModel = remember { RegisterScreenViewModel() }, key: String? = null) {
+private fun ScreenRegisterGenerate(navController: NavController, viewModel: RegisterScreenViewModel = remember { RegisterScreenViewModel() })
+{
 
     val isLoading by viewModel.isLoading.observeAsState(false)
     val isSuccess by viewModel.isSuccess.observeAsState(false)
@@ -82,7 +87,9 @@ private fun ScreenRegisterGenerate(navController: NavController, viewModel: Regi
 
         }
         if (isSuccess){
-            navController.navigate("login_screen")
+            navController.navigate("login_screen"){
+                launchSingleTop = true
+            }
         }
         Column(
             modifier = Modifier
@@ -97,11 +104,18 @@ private fun ScreenRegisterGenerate(navController: NavController, viewModel: Regi
 
             OutlinedTextField(
                 value = nick,
-                onValueChange = { nick = it },
+                onValueChange = {
+                    if(it.isEmpty()){
+                        nick = it
+                    }
+                    else if(!it[it.length-1].isWhitespace()) {
+                    nick = it.lowercase(Locale.ENGLISH)
+                }
+                }, maxLines = 1,
                 label = { Text(text = "Nick") },
                 modifier = Modifier.fillMaxWidth(),
                 isError = nickEmpty,
-                trailingIcon = {
+                supportingText = {
                     if (nickEmpty) {
                         Text(
                             text = "Doldurulması zorunlu alan",
@@ -115,11 +129,17 @@ private fun ScreenRegisterGenerate(navController: NavController, viewModel: Regi
 
             OutlinedTextField(
                 value = email,
-                onValueChange = { email = it },
+                onValueChange = {
+                    if(it.isEmpty()){
+                    email = it
+                }
+                else if(!it[it.length-1].isWhitespace()) {
+                    email = it.lowercase(Locale.ENGLISH)
+                } },
                 label = { Text(text = "E-posta") },
                 modifier = Modifier.fillMaxWidth(),
-                isError = emailEmpty,
-                trailingIcon = {
+                isError = emailEmpty, maxLines = 1,
+                supportingText = {
                     if (emailEmpty) {
                         Text(
                             text = "Doldurulması zorunlu alan",
@@ -133,12 +153,18 @@ private fun ScreenRegisterGenerate(navController: NavController, viewModel: Regi
 
             OutlinedTextField(
                 value = password1,
-                onValueChange = { password1 = it },
+                onValueChange = {
+                    if(it.isEmpty()){
+                    password1 = it
+                }
+                else if(!it[it.length-1].isWhitespace()) {
+                    password1 = it
+                } },
                 label = { Text(text = "Şifre") },
                 visualTransformation = PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(), maxLines = 1,
                 isError = password1Empty || !passwordsEqual,
-                trailingIcon = {
+                supportingText = {
                     if (password1Empty) {
                         Text(
                             text = "Doldurulması zorunlu alan",
@@ -157,12 +183,18 @@ private fun ScreenRegisterGenerate(navController: NavController, viewModel: Regi
 
             OutlinedTextField(
                 value = password2,
-                onValueChange = { password2 = it },
+                onValueChange = {
+                    if(it.isEmpty()){
+                        password2 = it
+                    }
+                    else if(!it[it.length-1].isWhitespace()) {
+                    password2 = it
+                } },
                 label = { Text(text = "Şifreyi tekrar giriniz") },
                 visualTransformation = PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(), maxLines = 1,
                 isError = password2Empty || !passwordsEqual,
-                trailingIcon = {
+                supportingText = {
                     if (password2Empty) {
                         Text(
                             text = "Doldurulması zorunlu alan",
@@ -181,6 +213,7 @@ private fun ScreenRegisterGenerate(navController: NavController, viewModel: Regi
 
             Button(
                 onClick = {
+
                     passwordsEqual = true
                     password2Empty = false
                     password1Empty = false

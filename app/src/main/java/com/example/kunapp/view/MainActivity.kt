@@ -25,16 +25,18 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun MainScreen(navController: NavController){
+fun MainScreen(nick: String?,navController: NavController){
 
-    MainScreenGenerate(navController)
+    MainScreenGenerate(nick = nick, navController = navController)
 
 
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun MainScreenGenerate(navController: NavController){
+private fun MainScreenGenerate(nick:String?,navController: NavController){
+    println(nick)
+
 Column(verticalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxSize()) {
     val mainNavController = rememberNavController()
     var clickedIndex by remember{ mutableStateOf(1) }
@@ -83,5 +85,5 @@ fun changeNavHost(navController:NavController,str:String){
 @Preview(showBackground = true)
 @Composable
 private fun ScreenPreview() {
-    MainScreenGenerate(navController = NavController(LocalContext.current))
+    MainScreenGenerate("",navController = NavController(LocalContext.current))
 }
