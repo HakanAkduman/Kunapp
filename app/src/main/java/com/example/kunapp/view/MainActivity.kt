@@ -5,9 +5,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,10 +21,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.kunapp.R
 
 @Composable
 fun MainScreen(navController: NavController){
@@ -43,34 +47,62 @@ Column(verticalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillM
         composable("post_screen"){ PostScreen(navController = mainNavController)}
         composable("profile_screen"){ ProfileScreen(navController = mainNavController)}
         composable("new_post_screen"){ NewPostScreen(navController = mainNavController)}
+        composable("chat_screen"){ ChatScreen(navController = navController)}
+        composable("message_screen"){
+            MessagesScreen(navController = navController)
+        }
     }
     Row(verticalAlignment = Alignment.Bottom, modifier = Modifier
         .fillMaxWidth()
         .fillMaxWidth()
         , horizontalArrangement = Arrangement.SpaceAround) {
-        Button(onClick = {
-
-            changeNavHost(mainNavController,"new_post_screen")
-            clickedIndex=0},
+        Button(onClick = {  changeNavHost(mainNavController,"new_post_screen")
+            clickedIndex=0
+},
         colors =if (clickedIndex==0) ButtonDefaults.buttonColors(Color.Red) else ButtonDefaults.buttonColors(Color.Cyan)
         ) {
-            Text(text = "newpost")
-        }
-        Button(onClick = {
 
+            ImageButton(
+                onClick = {
+
+                    changeNavHost(mainNavController,"new_post_screen")
+                    clickedIndex=0},
+                modifier = Modifier.size(20.dp),
+                drawableToDraw =R.drawable.edit )
+        }
+
+        Button(onClick = {
             changeNavHost(mainNavController,"post_screen")
-            clickedIndex=1},
+            clickedIndex=1
+           },
             colors =if (clickedIndex==1) ButtonDefaults.buttonColors(Color.Red) else ButtonDefaults.buttonColors(Color.Cyan))
         {
-            Text(text = "Main")
-        }
-        Button(onClick = {
 
-            changeNavHost(mainNavController,"profile_screen")
-            clickedIndex=2},
+            ImageButton(
+                onClick = {
+                    changeNavHost(mainNavController,"post_screen")
+                    clickedIndex=1
+                },
+                modifier = Modifier.size(20.dp),
+                drawableToDraw = R.drawable.home)
+                
+
+        }
+        Button(onClick = {changeNavHost(mainNavController,"profile_screen")
+            clickedIndex=2
+           },
             colors =if (clickedIndex==2) ButtonDefaults.buttonColors(Color.Red) else ButtonDefaults.buttonColors(Color.Cyan))
         {
-            Text(text = "profile")
+
+            ImageButton(
+                onClick = {
+                    changeNavHost(mainNavController,"profile_screen")
+                    clickedIndex=2
+                },
+                modifier = Modifier.size(20.dp),
+                drawableToDraw = R.drawable.user )
+                
+
         }
     }
 }
@@ -79,6 +111,8 @@ Column(verticalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillM
 fun changeNavHost(navController:NavController,str:String){
     navController.navigate(str)
 }
+
+
 
 @Preview(showBackground = true)
 @Composable

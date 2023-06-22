@@ -1,21 +1,26 @@
 package com.example.kunapp.view
 
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.paddingFrom
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,7 +41,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
 import androidx.navigation.NavController
 import com.example.kunapp.R
+import com.example.kunapp.ui.theme.Typography
 import com.example.kunapp.viewmodel.LoginScreenViewModel
+import java.time.format.TextStyle
 
 @Composable
 fun LoginScreen(navController:NavController){
@@ -65,6 +72,14 @@ private fun LoginScreenGenerate(navController:NavController,viewModel: LoginScre
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        Text(text = "Log in",
+            style = Typography.titleLarge,
+         modifier = Modifier.padding(5.dp).padding(vertical = 5.dp).fillMaxWidth())
+
+
+
+
+
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
@@ -89,7 +104,10 @@ private fun LoginScreenGenerate(navController:NavController,viewModel: LoginScre
                     passwordVisibility = !passwordVisibility
                 },
 
-                modifier = Modifier.size(35.dp).align(Alignment.CenterEnd).padding(end = 10.dp, top = 5.dp)
+                modifier = Modifier
+                    .size(35.dp)
+                    .align(Alignment.CenterEnd)
+                    .padding(end = 10.dp, top = 5.dp)
             ) {
                 Icon(
                     painter = painterResource(id = if(passwordVisibility) R.drawable.show else R.drawable.eye),
@@ -109,7 +127,9 @@ private fun LoginScreenGenerate(navController:NavController,viewModel: LoginScre
 
             },
             shape = RoundedCornerShape(8.dp),
-            modifier = Modifier.fillMaxWidth().padding(top = 50.dp, start = 50.dp,end=50.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 50.dp, start = 50.dp, end = 50.dp)
         ) {
             Text(text = "Giriş Yap")
         }
@@ -122,7 +142,9 @@ private fun LoginScreenGenerate(navController:NavController,viewModel: LoginScre
 
             },
             shape = RoundedCornerShape(8.dp),
-            modifier = Modifier.fillMaxWidth().padding(top = 10.dp, start = 50.dp,end=50.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp, start = 50.dp, end = 50.dp)
         ) {
             Text(text = "Kayıt Ol")
         }
