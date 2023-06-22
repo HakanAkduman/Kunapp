@@ -1,7 +1,15 @@
 package com.example.kunapp.view
 
+import android.Manifest
+import android.app.Activity
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.pm.PermissionInfo
+import android.net.Uri
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -37,8 +45,15 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
+import com.example.kunapp.MainActivity
 import com.example.kunapp.R
+import com.example.kunapp.viewmodel.NewPostScreenViewModel
+
 
 @Composable
 fun NewPostScreen(navController: NavController){
@@ -51,8 +66,11 @@ fun NewPostScreen(navController: NavController){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun NewPostScreenGenerate(navController: NavController){
+private fun NewPostScreenGenerate(navController: NavController,viewModel: NewPostScreenViewModel =remember{NewPostScreenViewModel()}){
 var postText by remember{ mutableStateOf("") }
+    var photoUri:Uri? by remember{ mutableStateOf(null) }
+
+
 Column(verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     modifier = Modifier
@@ -66,24 +84,69 @@ Column(verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxWidth()
     )
 
-    ImageButton(modifier = Modifier.size(150.dp), drawableToDraw = R.drawable.tap_to_load_image){
-        takePhoto()
-    }
-    Button(onClick = { share() }) {
+   ImagePicker(){
+       photoUri=it
+   }
+    Button(onClick = { viewModel.share(postText,photoUri=photoUri) }) {
         Text(text = "Paylaş")
     }
 
 }
 
 }
+@Composable
+fun ImagePicker(onImageSelected: (Uri) -> Unit) {
+    val context = LocalContext.current
+    val selectedImageUri = remember { mutableStateOf<Uri?>(null) }
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK && result.data != null) {
+            val imageUri = result.data?.data
+            if (imageUri != null) {
+                selectedImageUri.value = imageUri
+                onImageSelected(imageUri)
+            }
+        }
+    }
 
-fun share(){
-    //daha sonra eklenecek
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .clickable {
+                if (ContextCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                    ) == PackageManager.PERMISSION_GRANTED
+                ) {
+                    val intent = Intent(Intent.ACTION_PICK)
+                    intent.type = "image/*"
+                    launcher.launch(intent)
+                } else {
+                    ActivityCompat.requestPermissions(MainActivity(), arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),1)
+                }
+            },
+        contentAlignment = Alignment.Center
+    ) {
+        if (selectedImageUri.value != null) {
+            val imagePainter: Painter = rememberAsyncImagePainter(selectedImageUri!!)
+            Image(
+                painter = imagePainter,
+                contentDescription = "Selected Image",
+                modifier = Modifier.fillMaxSize()
+            )
+        } else {
+            val imagePainter: Painter = painterResource(R.drawable.tap_to_load_image)
+            Image(
+                painter = imagePainter,
+                contentDescription = "Selected Image",
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
 }
 
-fun takePhoto(){
-    Log.e("test","take photopart has been worked")
-}
+
+
+
 @Composable
 fun ImageButton(modifier:Modifier,drawableToDraw:Int,description:String?=null,onClick: () -> Unit) {
     Surface(

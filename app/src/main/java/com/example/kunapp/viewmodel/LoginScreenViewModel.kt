@@ -47,6 +47,20 @@ class LoginScreenViewModel():ViewModel() {
 
         }
     }
+    fun directLogin(){
+        _isLoading.value=true
+        database.collection("Users").whereEqualTo("email",auth.currentUser!!.email).addSnapshotListener { value, error ->
+            if (error==null&&value!=null &&!value.isEmpty){
+                _isLoading.value=false
+                _isSuccess.value=value.documents[0].get("nick") as String
+            }else{
+                _isLoading.value=false
+                _isError.value=error?.localizedMessage
+                _isError.value = ""
+            }
+        }
+
+    }
 
 
 
