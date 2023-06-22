@@ -49,11 +49,13 @@ import com.example.kunapp.R
 import com.example.kunapp.ui.theme.Typography
 import com.example.kunapp.viewmodel.LoginScreenViewModel
 import com.example.kunapp.viewmodel.RegisterScreenViewModel
+import com.google.firebase.auth.FirebaseAuth
 import java.util.Locale
 
 
 @Composable
 fun LoginScreen(navController:NavController){
+
 
     LoginScreenGenerate(navController)
 
@@ -63,9 +65,16 @@ fun LoginScreen(navController:NavController){
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LoginScreenGenerate(navController:NavController,viewModel: LoginScreenViewModel = remember { LoginScreenViewModel() }){
+    var auth=FirebaseAuth.getInstance()
+    if (auth.currentUser!=null){
+        viewModel.directLogin()
+    }
+
     val isLoading by viewModel.isLoading.observeAsState(false)
     val isSuccess by viewModel.isSuccess.observeAsState("")
     val isError by viewModel.isError.observeAsState("")
+
+
 
 
     var email by remember { mutableStateOf("") }
@@ -73,6 +82,8 @@ private fun LoginScreenGenerate(navController:NavController,viewModel: LoginScre
     var passwordVisibility by remember { mutableStateOf(false) }
     var emailEmpty by remember{ mutableStateOf(false) }
     var passwordEmpty by remember{ mutableStateOf(false) }
+
+
 
 
     Column(
