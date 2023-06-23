@@ -15,7 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 
 @Composable
-fun PostScreen(navController: NavController){
+fun PostScreen(nick:String?,navController: NavController){
 
     PostScreenGenerate(navController)
 

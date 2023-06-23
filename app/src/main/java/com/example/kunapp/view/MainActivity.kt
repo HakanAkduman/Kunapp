@@ -20,9 +20,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 
 @Composable
 fun MainScreen(nick: String?,navController: NavController){
@@ -40,11 +42,36 @@ private fun MainScreenGenerate(nick:String?,navController: NavController){
 Column(verticalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxSize()) {
     val mainNavController = rememberNavController()
     var clickedIndex by remember{ mutableStateOf(1) }
-    NavHost(navController = mainNavController, startDestination = "post_screen",
+    NavHost(navController = mainNavController, startDestination = "post_screen/$nick",
     ){
-        composable("post_screen"){ PostScreen(navController = mainNavController)}
-        composable("profile_screen"){ ProfileScreen(navController = mainNavController)}
-        composable("new_post_screen"){ NewPostScreen(navController = mainNavController)}
+        composable("post_screen/{nick}", arguments = listOf(
+            navArgument("nick"){
+                type= NavType.StringType
+            }
+
+        )){
+            val nick=remember{
+                it.arguments?.getString("nick")
+            }
+            PostScreen(nick = nick, navController = mainNavController)}
+        composable("profile_screen/{nick}", arguments = listOf(
+            navArgument("nick"){
+                type= NavType.StringType
+            }
+        )){
+            val nick=remember{
+                it.arguments?.getString("nick")
+            }
+            ProfileScreen(nick,navController = mainNavController)}
+        composable("new_post_screen/{nick}", arguments = listOf(
+            navArgument("nick"){
+                type= NavType.StringType
+            }
+        )){
+            val nick=remember{
+                it.arguments?.getString("nick")
+            }
+            NewPostScreen(nick,navController = mainNavController)}
     }
     Row(verticalAlignment = Alignment.Bottom, modifier = Modifier
         .fillMaxWidth()
@@ -52,7 +79,7 @@ Column(verticalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillM
         , horizontalArrangement = Arrangement.SpaceAround) {
         Button(onClick = {
 
-            changeNavHost(mainNavController,"new_post_screen")
+            changeNavHost(mainNavController,"new_post_screen/$nick")
             clickedIndex=0},
         colors =if (clickedIndex==0) ButtonDefaults.buttonColors(Color.Red) else ButtonDefaults.buttonColors(Color.Cyan)
         ) {
@@ -60,7 +87,7 @@ Column(verticalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillM
         }
         Button(onClick = {
 
-            changeNavHost(mainNavController,"post_screen")
+            changeNavHost(mainNavController,"post_screen/$nick")
             clickedIndex=1},
             colors =if (clickedIndex==1) ButtonDefaults.buttonColors(Color.Red) else ButtonDefaults.buttonColors(Color.Cyan))
         {
@@ -68,7 +95,7 @@ Column(verticalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillM
         }
         Button(onClick = {
 
-            changeNavHost(mainNavController,"profile_screen")
+            changeNavHost(mainNavController,"profile_screen/$nick")
             clickedIndex=2},
             colors =if (clickedIndex==2) ButtonDefaults.buttonColors(Color.Red) else ButtonDefaults.buttonColors(Color.Cyan))
         {

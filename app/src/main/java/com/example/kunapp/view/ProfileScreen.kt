@@ -38,7 +38,7 @@ import androidx.navigation.NavController
 import com.example.kunapp.R
 
 @Composable
-fun ProfileScreen(navController: NavController) {
+fun ProfileScreen(nick:String?,navController: NavController) {
     ProfileScreenGenerate(navController)
 }
 
