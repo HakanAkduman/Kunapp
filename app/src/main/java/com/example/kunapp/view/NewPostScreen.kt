@@ -1,12 +1,7 @@
 package com.example.kunapp.view
 
-import android.Manifest
-import android.app.Activity
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.content.pm.PermissionInfo
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,50 +11,45 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.currentCompositionLocalContext
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
-import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
-import com.example.kunapp.MainActivity
+import coil.ImageLoader
+import coil.request.ImageRequest
 import com.example.kunapp.R
 import com.example.kunapp.viewmodel.NewPostScreenViewModel
 
 
 @Composable
-fun NewPostScreen(navController: NavController){
+fun NewPostScreen(nick:String?,navController: NavController){
 
-    NewPostScreenGenerate(navController)
+    NewPostScreenGenerate(nick,navController)
 
 
 }
@@ -67,9 +57,46 @@ fun NewPostScreen(navController: NavController){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun NewPostScreenGenerate(navController: NavController,viewModel: NewPostScreenViewModel =remember{NewPostScreenViewModel()}){
-var postText by remember{ mutableStateOf("") }
-    var photoUri:Uri? by remember{ mutableStateOf(null) }
+private fun NewPostScreenGenerate(nick:String?,navController: NavController,viewModel: NewPostScreenViewModel =remember{NewPostScreenViewModel()}){
+
+    val isLoading by viewModel.isLoading.observeAsState(false)
+    val isSuccess by viewModel.isSuccess.observeAsState("")
+    val isError by viewModel.isError.observeAsState("")
+
+    var postText by remember{ mutableStateOf("") }
+    val context = LocalContext.current
+    val imageUri = remember { mutableStateOf<Uri?>(null) }
+    val imageLoader = ImageLoader(context)
+    var painter :Painter? by remember {
+        mutableStateOf(null)
+    }
+
+
+    val pickImageLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri: Uri? -> imageUri.value = uri }
+    )
+    val pickImageButton = {
+        pickImageLauncher.launch("image/*")
+
+    }
+    val request = ImageRequest.Builder(context)
+        .data(imageUri.value)
+        .target { result ->
+            val bitmap = (result as BitmapDrawable).bitmap
+            painter = BitmapPainter(bitmap.asImageBitmap())
+        }
+        .build()
+
+    if (imageUri.value != null) {
+        imageLoader.enqueue(request)
+    } else {
+        painter= painterResource(id = R.drawable.tap_to_load_image)
+    }
+
+
+
+
 
 
 Column(verticalArrangement = Arrangement.Center,
@@ -78,92 +105,77 @@ Column(verticalArrangement = Arrangement.Center,
         .fillMaxWidth()
         .fillMaxHeight(0.80F)
         .padding(vertical = 10.dp, horizontal = 15.dp)) {
+
+    if (isLoading) {//daha sonra loading screen eklenebilir
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.5f)),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .size(60.dp)
+                    .padding(16.dp),
+                color = Color.White
+            )
+        }
+    }
+    if (isError.isNotEmpty()) {
+        Toast.makeText(LocalContext.current, isError, Toast.LENGTH_LONG).show()
+
+    }
+    if (!isSuccess.isNullOrBlank()){
+        navController.navigate("post_screen/$nick") {
+            launchSingleTop = true
+        }
+    }
+
     OutlinedTextField(
         value = postText,
         onValueChange = { postText = it },
         label = { Text(text = "Paylaşmak istediklerinizi girebilirsiniz") },
         modifier = Modifier.fillMaxWidth()
     )
+    ImageButton(painter = painter!!,
+        description = "Selected Image",
+        modifier = Modifier.fillMaxSize(0.60F),
+        onClick = pickImageButton
 
-   ImagePicker(){
-       photoUri=it
-   }
-    Button(onClick = { viewModel.share(postText,photoUri=photoUri) }) {
+    )
+
+
+    Button(onClick = { viewModel.share(text = postText,photoUri=imageUri.value, nick = nick) }) {
         Text(text = "Paylaş")
     }
 
 }
 
 }
-@Composable
-fun ImagePicker(onImageSelected: (Uri) -> Unit) {
-    val context = LocalContext.current
-    val selectedImageUri = remember { mutableStateOf<Uri?>(null) }
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK && result.data != null) {
-            val imageUri = result.data?.data
-            if (imageUri != null) {
-                selectedImageUri.value = imageUri
-                onImageSelected(imageUri)
-            }
-        }
-    }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .clickable {
-                if (ContextCompat.checkSelfPermission(
-                        context,
-                        Manifest.permission.READ_EXTERNAL_STORAGE
-                    ) == PackageManager.PERMISSION_GRANTED
-                ) {
-                    val intent = Intent(Intent.ACTION_PICK)
-                    intent.type = "image/*"
-                    launcher.launch(intent)
-                } else {
-                    ActivityCompat.requestPermissions(MainActivity(), arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),1)
-                }
-            },
-        contentAlignment = Alignment.Center
-    ) {
-        if (selectedImageUri.value != null) {
-            val imagePainter: Painter = rememberAsyncImagePainter(selectedImageUri!!)
-            Image(
-                painter = imagePainter,
-                contentDescription = "Selected Image",
-                modifier = Modifier.fillMaxSize()
-            )
-        } else {
-            val imagePainter: Painter = painterResource(R.drawable.tap_to_load_image)
-            Image(
-                painter = imagePainter,
-                contentDescription = "Selected Image",
-                modifier = Modifier.fillMaxSize()
-            )
-        }
-    }
-}
+
+
 
 
 
 
 @Composable
-fun ImageButton(modifier:Modifier,drawableToDraw:Int,description:String?=null,onClick: () -> Unit) {
+fun ImageButton(modifier:Modifier,painter: Painter,description:String?=null,onClick: () -> Unit) {
     Surface(
         modifier = modifier.clickable(onClick = onClick),
         color = Color.Transparent
     ) {
         Image(
-            painter = painterResource(drawableToDraw),
+            painter = painter,
             contentDescription = description,
             modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Fit
         )
     }
 }
 @Preview(showBackground = true)
 @Composable
 private fun ScreenPreview() {
-    NewPostScreenGenerate(navController = NavController(LocalContext.current))
+    NewPostScreenGenerate("",navController = NavController(LocalContext.current))
 }

@@ -27,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
@@ -37,7 +38,7 @@ import androidx.navigation.NavController
 import com.example.kunapp.R
 
 @Composable
-fun ProfileScreen(navController: NavController) {
+fun ProfileScreen(nick:String?,navController: NavController) {
     ProfileScreenGenerate(navController)
 }
 
@@ -53,9 +54,10 @@ private fun ProfileScreenGenerate(navController: NavController) {
             horizontalArrangement = Arrangement.End
         ) {
             ImageButton(
-                modifier = Modifier.size(35.dp)
-                    .border(BorderStroke( 0.dp, Color.Transparent), CircleShape),
-                drawableToDraw = R.drawable.message_icon
+                modifier = Modifier
+                    .size(35.dp)
+                    .border(BorderStroke(0.dp, Color.Transparent), CircleShape),
+                painter = painterResource(id = R.drawable.message_icon)
             ) {
                 openMessages()
             }
@@ -65,7 +67,7 @@ private fun ProfileScreenGenerate(navController: NavController) {
                 modifier = Modifier
                     .size(100.dp)
                     .border(2.dp, Color.Black, CircleShape),
-                drawableToDraw = R.drawable.default_profile_photo
+                painter = painterResource(id = R.drawable.default_profile_photo)
             ) {
                 changeProfile()
             }

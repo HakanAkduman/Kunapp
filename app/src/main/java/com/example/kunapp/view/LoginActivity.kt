@@ -1,4 +1,4 @@
-package com.example.kunapp
+package com.example.kunapp.view
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
