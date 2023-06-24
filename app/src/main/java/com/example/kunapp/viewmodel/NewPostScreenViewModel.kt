@@ -39,7 +39,9 @@ class NewPostScreenViewModel:ViewModel() {
                         hash.put("posttext",text)
                         hash.put("url",url)
                         hash.put("likelist", listOf<String>())
-                        hash.put("commentlist",HashMap<String,String>())
+                        hash.put("date",date.toString())
+                        hash.put("commentlist", listOf<HashMap<String,String>>())
+                        hash.put("likenumber","0")
                         database.collection("Post").add(hash).addOnFailureListener {
                             _isLoading.value=false
                             _isError.value=it.localizedMessage
@@ -74,7 +76,9 @@ class NewPostScreenViewModel:ViewModel() {
             hash.put("posttext",text)
             hash.put("url",url)
             hash.put("likelist", listOf<String>())
-            hash.put("commentlist",HashMap<String,String>())
+            hash.put("commentlist", listOf<HashMap<String,String>>())
+            hash.put("date",date.toString())
+            hash.put("likenumber","0")
             database.collection("Post").add(hash).addOnFailureListener {
                 _isLoading.value=false
                 _isError.value=it.localizedMessage

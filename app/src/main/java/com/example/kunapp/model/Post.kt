@@ -5,8 +5,9 @@ import android.net.Uri
 data class Post(
     val nick:String,
     val postText:String,
-    val imageUri: Uri?,
+    val imageUri: String,
     var likeList: List<String>,
+    var likeNumber:String,
     var commentList:List<Comment>
 ) {
 }

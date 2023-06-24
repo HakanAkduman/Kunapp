@@ -84,7 +84,7 @@ Column(verticalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillM
     }
     Row(verticalAlignment = Alignment.Bottom, modifier = Modifier
         .fillMaxWidth()
-        .fillMaxWidth()
+
         , horizontalArrangement = Arrangement.SpaceAround) {
 
         Button(onClick = {
