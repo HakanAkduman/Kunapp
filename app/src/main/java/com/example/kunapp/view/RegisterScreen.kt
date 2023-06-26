@@ -88,6 +88,7 @@ private fun ScreenRegisterGenerate(navController: NavController, viewModel: Regi
         }
         if (isSuccess){
             navController.navigate("login_screen"){
+                popUpTo("register_screen") { inclusive = true }
                 launchSingleTop = true
             }
         }

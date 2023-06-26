@@ -35,55 +35,94 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavOptionsBuilder
 import com.example.kunapp.R
+import com.example.kunapp.viewmodel.ProfileScreenViewModel
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun ProfileScreen(nick:String?,navController: NavController) {
-    ProfileScreenGenerate(navController)
+fun ProfileScreen(userNick:String?,profileNick:String?,navController: NavController,loginNavController: NavController,
+                    viewModel:ProfileScreenViewModel= remember {
+                        ProfileScreenViewModel()
+                    }) {
+    ProfileScreenGenerate(navController,userNick, profileNick, loginNavController, viewModel)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ProfileScreenGenerate(navController: NavController) {
-    var nick by remember { mutableStateOf("nick") }
+private fun ProfileScreenGenerate(navController: NavController,userNick: String?,profileNick: String?,loginNavController: NavController,viewModel: ProfileScreenViewModel) {
+
+
+    var nick by remember { mutableStateOf(profileNick) }
+    var editable=userNick==profileNick
+
+
+
     Column(modifier = Modifier.fillMaxSize()) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp),
-            horizontalArrangement = Arrangement.End
-        ) {
-            ImageButton(
+        if(editable){
+            Row(
+
                 modifier = Modifier
-                    .size(35.dp)
-                    .border(BorderStroke(0.dp, Color.Transparent), CircleShape),
-                painter = painterResource(id = R.drawable.message_icon)
+                    .fillMaxWidth()
+                    .padding(20.dp),
+                horizontalArrangement = Arrangement.End
             ) {
-                openMessages()
+                ImageButton(
+                    modifier = Modifier
+                        .size(35.dp)
+                        .border(BorderStroke(0.dp, Color.Transparent), CircleShape),
+                    painter = painterResource(id = R.drawable.message_icon),
+
+                    ) {
+                    openMessages()
+                }
             }
         }
+
         Row(modifier = Modifier.padding(top = 50.dp, start = 20.dp, end = 20.dp, bottom = 50.dp)) {
             ImageButton(
                 modifier = Modifier
                     .size(100.dp)
                     .border(2.dp, Color.Black, CircleShape),
-                painter = painterResource(id = R.drawable.default_profile_photo)
+                painter = painterResource(id = R.drawable.default_profile_photo),
+                enabled = editable
             ) {
                 changeProfile()
             }
             Column(modifier = Modifier.padding(start = 15.dp)) {
                 Text(
-                    text = nick,
+                    text = nick?:"Nick bulunamadı",
                     fontSize = 25.sp,
                     fontStyle = FontStyle.Italic
                 )
                 Spacer(modifier = Modifier.height(10.dp))
-                Button(
-                    onClick = { /*TODO*/ },
-                    modifier = Modifier.width(120.dp)
-                ) {
-                    Text(text = "Takip et", fontSize = 14.sp)
+                if(editable){
+                    Button(
+                        onClick = {
+                            var mAuth=FirebaseAuth.getInstance()
+                            mAuth.signOut()
+                            loginNavController.navigate("login_screen"){
+                                launchSingleTop = true
+                                popUpTo("profile_screen/$userNick") { inclusive = true }
+
+                            }
+                        },
+                        modifier = Modifier.width(120.dp)
+                    ) {
+                        Text(text = "Çıkış yap")
+
+                    }
+
+                }else{
+                    Button(
+                        onClick = { /*TODO*/ },
+                        modifier = Modifier.width(120.dp)
+                    ) {
+                        Text(text = "Takip et")
+
+                    }
                 }
+
             }
         }
     }
@@ -100,5 +139,7 @@ fun changeProfile() {
 @Preview(showBackground = true)
 @Composable
 private fun ScreenPreview() {
-    ProfileScreenGenerate(navController = NavController(LocalContext.current))
+    ProfileScreenGenerate(navController = NavController(LocalContext.current), userNick = "", profileNick = "", loginNavController = NavController(
+        LocalContext.current),ProfileScreenViewModel()
+    )
 }

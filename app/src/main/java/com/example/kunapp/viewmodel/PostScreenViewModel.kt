@@ -13,11 +13,14 @@ import com.google.firebase.storage.FirebaseStorage
 class PostScreenViewModel:ViewModel() {
     private val _isLoading = MutableLiveData(false)
     private val _isSuccess = MutableLiveData(listOf<Post>())
+    private val _searchList = MutableLiveData(listOf<String>())
     private val _isError = MutableLiveData("")
+    private val allNicks=MutableLiveData(listOf<String>())
 
 
     val isLoading: LiveData<Boolean> = _isLoading
     val isSuccess: LiveData<List<Post>> = _isSuccess
+    val searchList:LiveData<List<String>> =_searchList
     val isError: LiveData<String> = _isError
 
     val database= FirebaseFirestore.getInstance()
@@ -45,7 +48,7 @@ class PostScreenViewModel:ViewModel() {
                             commentList
 
                         )
-                        println(post.postText+"  :  "+post.nick)
+
                         list.add(post)
                     }
                     _isLoading.value=false
@@ -68,6 +71,32 @@ class PostScreenViewModel:ViewModel() {
 
     }
     fun getPostsFollowings(){
+
+    }
+    fun searchNick(str:String){
+        if (str.isBlank()){
+            _searchList.value= listOf<String>()
+        }
+        else if (allNicks.value!=null && allNicks.value!!.isNotEmpty()){
+            _searchList.value= allNicks.value!!.filter { it.contains(str, ignoreCase = true) }
+        }else{
+            database.collection("Users").addSnapshotListener { value, error ->
+                if(error!=null){
+                    _isError.value=error!!.localizedMessage
+                    _isError.value=""
+                }else{
+                    if(value!=null && !value.isEmpty){
+                        var documents=value.documents
+                        var list= mutableListOf<String>()
+                        for (doc in documents){
+                            list.add(doc.get("nick") as String)
+                        }
+                        allNicks.value=list
+                        searchNick(str)
+                    }
+                }
+            }
+        }
 
     }
 }

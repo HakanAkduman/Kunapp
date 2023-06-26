@@ -161,9 +161,9 @@ Column(verticalArrangement = Arrangement.Center,
 
 
 @Composable
-fun ImageButton(modifier:Modifier,painter: Painter,description:String?=null,onClick: () -> Unit) {
+fun ImageButton(modifier:Modifier,painter: Painter,description:String?=null,enabled:Boolean=true,onClick: () -> Unit) {
     Surface(
-        modifier = modifier.clickable(onClick = onClick),
+        modifier = modifier.clickable(onClick = onClick, enabled = enabled),
         color = Color.Transparent
     ) {
         Image(
