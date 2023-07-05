@@ -86,7 +86,7 @@ class NewPostScreenViewModel:ViewModel() {
             }.addOnSuccessListener {
                 _isLoading.value=false
                 _isSuccess.value="Done"
-                _isSuccess.value=""
+
             }
         }
     }

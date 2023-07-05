@@ -21,6 +21,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -45,16 +46,22 @@ fun ProfileScreen(userNick:String?,profileNick:String?,navController: NavControl
                     viewModel:ProfileScreenViewModel= remember {
                         ProfileScreenViewModel()
                     }) {
+    viewModel.controlFollowings(userNick!!,profileNick!!)
     ProfileScreenGenerate(navController,userNick, profileNick, loginNavController, viewModel)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ProfileScreenGenerate(navController: NavController,userNick: String?,profileNick: String?,loginNavController: NavController,viewModel: ProfileScreenViewModel) {
 
+    val isLoading by viewModel.isLoading.observeAsState(false)
+    val isSuccess by viewModel.isSuccess.observeAsState(false)
+    val isError by viewModel.isError.observeAsState("")
+    var follow by remember{ mutableStateOf(false) }
 
-    var nick by remember { mutableStateOf(profileNick) }
-    var editable=userNick==profileNick
+    follow = isSuccess
+
+    val nick by remember { mutableStateOf(profileNick) }
+    val editable=userNick==profileNick
 
 
 
@@ -71,7 +78,7 @@ private fun ProfileScreenGenerate(navController: NavController,userNick: String?
                     modifier = Modifier
                         .size(35.dp)
                         .border(BorderStroke(0.dp, Color.Transparent), CircleShape),
-                    painter = painterResource(id = R.drawable.message_icon),
+                    painter = painterResource(id = R.drawable.message_icon)
 
                     ) {
                     openMessages()
@@ -99,7 +106,7 @@ private fun ProfileScreenGenerate(navController: NavController,userNick: String?
                 if(editable){
                     Button(
                         onClick = {
-                            var mAuth=FirebaseAuth.getInstance()
+                            val mAuth=FirebaseAuth.getInstance()
                             mAuth.signOut()
                             loginNavController.navigate("login_screen"){
                                 launchSingleTop = true
@@ -115,11 +122,20 @@ private fun ProfileScreenGenerate(navController: NavController,userNick: String?
 
                 }else{
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = {
+                            if (follow) {
+                                viewModel.unfollow(userNick!!, profileNick!!)
+                            } else {
+                                viewModel.follow(userNick!!, profileNick!!)
+                            }
+                        },
                         modifier = Modifier.width(120.dp)
                     ) {
-                        Text(text = "Takip et")
-
+                        if (follow) {
+                            Text(text = "Takipten çık")
+                        } else {
+                            Text(text = "Takip et")
+                        }
                     }
                 }
 

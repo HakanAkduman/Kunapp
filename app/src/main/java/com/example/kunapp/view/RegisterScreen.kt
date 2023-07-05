@@ -55,6 +55,7 @@ private fun ScreenRegisterGenerate(navController: NavController, viewModel: Regi
     val isLoading by viewModel.isLoading.observeAsState(false)
     val isSuccess by viewModel.isSuccess.observeAsState(false)
     val isError by viewModel.isError.observeAsState("")
+    var previousError by remember{ mutableStateOf("") }
 
     var email by remember { mutableStateOf("") }
     var password1 by remember { mutableStateOf("") }
@@ -68,6 +69,7 @@ private fun ScreenRegisterGenerate(navController: NavController, viewModel: Regi
 
     Box(modifier = Modifier.fillMaxSize()) {
         if (isLoading) {
+            previousError=""
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -82,9 +84,9 @@ private fun ScreenRegisterGenerate(navController: NavController, viewModel: Regi
                 )
             }
         }
-        if (isError.isNotEmpty()) {
+        if (isError.isNotBlank()&&previousError.isBlank()) {
             Toast.makeText(LocalContext.current, isError, Toast.LENGTH_LONG).show()
-
+            previousError=isError
         }
         if (isSuccess){
             navController.navigate("login_screen"){

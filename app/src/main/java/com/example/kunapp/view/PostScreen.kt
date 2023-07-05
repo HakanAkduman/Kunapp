@@ -63,22 +63,21 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import java.util.Locale
 
 
-lateinit var viewModel: PostScreenViewModel
+
 
 @Composable
-fun PostScreen(nick:String?,navController: NavController,loginNavController: NavController){
-    println("post screene gelen nick= $nick")
-    viewModel= remember{ PostScreenViewModel() }
+fun PostScreen(nick:String?,navController: NavController,loginNavController: NavController,viewModel: PostScreenViewModel=remember{PostScreenViewModel()}){
 
 
-    PostScreenGenerate(navController,nick,loginNavController)
+
+    PostScreenGenerate(navController,nick,loginNavController,viewModel)
     viewModel.getPostsPopular()
 
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun PostScreenGenerate(navController: NavController,nick: String?,loginNavController: NavController){
+private fun PostScreenGenerate(navController: NavController,nick: String?,loginNavController: NavController,viewModel: PostScreenViewModel){
 
 
     val isLoading by viewModel.isLoading.observeAsState(false)
@@ -277,9 +276,9 @@ fun PostItem(post: Post) {
 @Composable
 private fun ScreenPreview() {
 
-    viewModel= remember{ PostScreenViewModel() }
 
-    PostScreenGenerate(NavController(LocalContext.current),"", NavController(LocalContext.current))
-    viewModel.getPostsPopular()
+
+    PostScreenGenerate(NavController(LocalContext.current),"", NavController(LocalContext.current),PostScreenViewModel())
+
 
 }

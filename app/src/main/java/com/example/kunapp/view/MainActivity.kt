@@ -45,7 +45,6 @@ fun MainScreen(nick: String?,navController: NavController){
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MainScreenGenerate(nick:String?,navController: NavController){
-    println("main screen e gelen nick= $nick")
 
     val mainNavController = rememberNavController()
     var clickedIndex by remember { mutableStateOf(1) }

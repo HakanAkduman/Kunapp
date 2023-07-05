@@ -66,10 +66,10 @@ fun LoginScreen(navController:NavController){
 @Composable
 private fun LoginScreenGenerate(navController:NavController,viewModel: LoginScreenViewModel = remember { LoginScreenViewModel() }){
     var auth=FirebaseAuth.getInstance()
-    if (auth.currentUser!=null){
+   /* if (auth.currentUser!=null){
         viewModel.directLogin()
     }
-
+*/
     val isLoading by viewModel.isLoading.observeAsState(false)
     val isSuccess by viewModel.isSuccess.observeAsState("")
     val isError by viewModel.isError.observeAsState("")
