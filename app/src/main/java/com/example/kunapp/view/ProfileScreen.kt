@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,10 +18,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -35,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.kunapp.R
+import com.example.kunapp.viewmodel.ChatScreenViewModel
 
 @Composable
 fun ProfileScreen(navController: NavController) {
@@ -43,8 +47,17 @@ fun ProfileScreen(navController: NavController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ProfileScreenGenerate(navController: NavController) {
+private fun ProfileScreenGenerate(navController: NavController,viewModel:ChatScreenViewModel=remember{ ChatScreenViewModel() }) {
+    val isLoading by viewModel.isLoading.observeAsState(false)
+    val isSuccess by viewModel.isSuccess.observeAsState("")
+    val isError by viewModel.isError.observeAsState("")
+   
     var nick by remember { mutableStateOf("nick") }
+    if(isLoading==true){
+        Box(modifier = Modifier.fillMaxSize()){
+            CircularProgressIndicator()
+        }
+    }
     Column(modifier = Modifier.fillMaxSize()) {
         Row(
             modifier = Modifier
@@ -53,11 +66,12 @@ private fun ProfileScreenGenerate(navController: NavController) {
             horizontalArrangement = Arrangement.End
         ) {
             ImageButton(
-                modifier = Modifier.size(35.dp)
-                    .border(BorderStroke( 0.dp, Color.Transparent), CircleShape),
+                modifier = Modifier
+                    .size(35.dp)
+                    .border(BorderStroke(0.dp, Color.Transparent), CircleShape),
                 drawableToDraw = R.drawable.message_icon
             ) {
-                openMessages()
+                viewModel.openMessages(nick)
             }
         }
         Row(modifier = Modifier.padding(top = 50.dp, start = 20.dp, end = 20.dp, bottom = 50.dp)) {
@@ -87,9 +101,7 @@ private fun ProfileScreenGenerate(navController: NavController) {
     }
 }
 
-fun openMessages() {
-    // Mesajlar ekranını açmak için gerekli işlemler
-}
+
 
 fun changeProfile() {
     // Profil fotoğrafını değiştirmek için gerekli işlemler

@@ -57,7 +57,7 @@ import com.example.kunapp.viewmodel.NewPostScreenViewModel
 
 
 @Composable
-fun NewPostScreen(navController: NavController){
+fun NewPostScreen(navController: NavController) {
 
     NewPostScreenGenerate(navController)
 
@@ -67,47 +67,54 @@ fun NewPostScreen(navController: NavController){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun NewPostScreenGenerate(navController: NavController,viewModel: NewPostScreenViewModel =remember{NewPostScreenViewModel()}){
-var postText by remember{ mutableStateOf("") }
-    var photoUri:Uri? by remember{ mutableStateOf(null) }
+private fun NewPostScreenGenerate(
+    navController: NavController,
+    viewModel: NewPostScreenViewModel = remember { NewPostScreenViewModel() }
+) {
+    var postText by remember { mutableStateOf("") }
+    var photoUri: Uri? by remember { mutableStateOf(null) }
 
 
-Column(verticalArrangement = Arrangement.Center,
+    Column(
+        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
-    modifier = Modifier
-        .fillMaxWidth()
-        .fillMaxHeight(0.80F)
-        .padding(vertical = 10.dp, horizontal = 15.dp)) {
-    OutlinedTextField(
-        value = postText,
-        onValueChange = { postText = it },
-        label = { Text(text = "Paylaşmak istediklerinizi girebilirsiniz") },
-        modifier = Modifier.fillMaxWidth()
-    )
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.80F)
+            .padding(vertical = 10.dp, horizontal = 15.dp)
+    ) {
+        OutlinedTextField(
+            value = postText,
+            onValueChange = { postText = it },
+            label = { Text(text = "Paylaşmak istediklerinizi girebilirsiniz") },
+            modifier = Modifier.fillMaxWidth()
+        )
 
-   ImagePicker(){
-       photoUri=it
-   }
-    Button(onClick = { viewModel.share(postText,photoUri=photoUri) }) {
-        Text(text = "Paylaş")
+        ImagePicker() {
+            photoUri = it
+        }
+        Button(onClick = { viewModel.share(postText, photoUri = photoUri) }) {
+            Text(text = "Paylaş")
+        }
+
     }
 
 }
 
-}
 @Composable
 fun ImagePicker(onImageSelected: (Uri) -> Unit) {
     val context = LocalContext.current
     val selectedImageUri = remember { mutableStateOf<Uri?>(null) }
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK && result.data != null) {
-            val imageUri = result.data?.data
-            if (imageUri != null) {
-                selectedImageUri.value = imageUri
-                onImageSelected(imageUri)
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK && result.data != null) {
+                val imageUri = result.data?.data
+                if (imageUri != null) {
+                    selectedImageUri.value = imageUri
+                    onImageSelected(imageUri)
+                }
             }
         }
-    }
 
     Box(
         modifier = Modifier
@@ -122,7 +129,11 @@ fun ImagePicker(onImageSelected: (Uri) -> Unit) {
                     intent.type = "image/*"
                     launcher.launch(intent)
                 } else {
-                    ActivityCompat.requestPermissions(MainActivity(), arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),1)
+                    ActivityCompat.requestPermissions(
+                        MainActivity(),
+                        arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                        1
+                    )
                 }
             },
         contentAlignment = Alignment.Center
@@ -146,10 +157,13 @@ fun ImagePicker(onImageSelected: (Uri) -> Unit) {
 }
 
 
-
-
 @Composable
-fun ImageButton(modifier:Modifier,drawableToDraw:Int,description:String?=null,onClick: () -> Unit) {
+fun ImageButton(
+    modifier: Modifier,
+    drawableToDraw: Int,
+    description: String? = null,
+    onClick: () -> Unit
+) {
     Surface(
         modifier = modifier.clickable(onClick = onClick),
         color = Color.Transparent
@@ -162,6 +176,7 @@ fun ImageButton(modifier:Modifier,drawableToDraw:Int,description:String?=null,on
         )
     }
 }
+
 @Preview(showBackground = true)
 @Composable
 private fun ScreenPreview() {

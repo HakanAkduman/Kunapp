@@ -22,10 +22,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavArgs
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.kunapp.R
 
 @Composable
@@ -50,8 +52,11 @@ Column(verticalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillM
         composable("profile_screen"){ ProfileScreen(navController = mainNavController)}
         composable("new_post_screen"){ NewPostScreen(navController = mainNavController)}
         composable("chat_screen"){ ChatScreen(navController = navController)}
-        composable("message_screen"){
-            MessagesScreen(navController = navController)
+        composable("message_screen/{userNick}",NavArgs(
+            navArgument("userNick"){
+                            }
+        )){
+            MessagesScreen(navController = navController, userNick = nick!!)
         }
     }
     Row(verticalAlignment = Alignment.Bottom, modifier = Modifier
