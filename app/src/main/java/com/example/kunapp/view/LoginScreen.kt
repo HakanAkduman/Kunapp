@@ -66,13 +66,14 @@ fun LoginScreen(navController:NavController){
 @Composable
 private fun LoginScreenGenerate(navController:NavController,viewModel: LoginScreenViewModel = remember { LoginScreenViewModel() }){
     var auth=FirebaseAuth.getInstance()
-   /* if (auth.currentUser!=null){
+    if (auth.currentUser!=null){
         viewModel.directLogin()
     }
-*/
+
     val isLoading by viewModel.isLoading.observeAsState(false)
     val isSuccess by viewModel.isSuccess.observeAsState("")
     val isError by viewModel.isError.observeAsState("")
+    var prevError by remember{ mutableStateOf("") }
 
 
 
@@ -109,9 +110,9 @@ private fun LoginScreenGenerate(navController:NavController,viewModel: LoginScre
                 )
             }
         }
-        if (isError.isNotEmpty()) {
+        if (isError.isNotEmpty()&&prevError!=isError) {
             Toast.makeText(LocalContext.current, isError, Toast.LENGTH_LONG).show()
-
+            prevError=isError
         }
         if (!isSuccess.isNullOrBlank()){
             navController.navigate("main_screen/$isSuccess") {

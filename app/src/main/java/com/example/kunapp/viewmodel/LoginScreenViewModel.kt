@@ -32,7 +32,7 @@ class LoginScreenViewModel():ViewModel() {
         auth.signInWithEmailAndPassword(email,password).addOnFailureListener {
             _isLoading.value=false
             _isError.value=it.localizedMessage
-            _isError.value = ""
+
         }.addOnSuccessListener {
             database.collection("Users").whereEqualTo("email",email).addSnapshotListener { value, error ->
                 if (error==null&&value!=null &&!value.isEmpty){
@@ -41,7 +41,7 @@ class LoginScreenViewModel():ViewModel() {
                 }else{
                     _isLoading.value=false
                     _isError.value=error?.localizedMessage
-                    _isError.value = ""
+
                 }
             }
 
@@ -56,7 +56,7 @@ class LoginScreenViewModel():ViewModel() {
             }else{
                 _isLoading.value=false
                 _isError.value=error?.localizedMessage
-                _isError.value = ""
+
             }
         }
 

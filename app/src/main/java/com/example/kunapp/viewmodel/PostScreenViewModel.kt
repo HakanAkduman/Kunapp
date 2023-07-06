@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.example.kunapp.model.Comment
 import com.example.kunapp.model.Post
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
@@ -40,11 +41,11 @@ class PostScreenViewModel:ViewModel() {
                             commentList.add(comment)
                         }
                         var post=Post(
+                            doc.id,
                             doc.get("nick") as String,
                             doc.get("posttext")as String,
                             doc.get("url") as String,
                             doc.get("likelist") as List<String>,
-                            doc.get("likenumber") as String,
                             commentList
 
                         )
@@ -98,5 +99,16 @@ class PostScreenViewModel:ViewModel() {
             }
         }
 
+    }
+
+    fun like(id:String,nick:String,likeList:List<String>){
+        database.document("Post/$id").update("likelist", FieldValue.arrayUnion(nick)).addOnFailureListener {
+            _isError.value=it.localizedMessage
+        }
+    }
+    fun unLike(id:String,nick:String,likeList:List<String>){
+        database.document("Post/$id").update("likelist", FieldValue.arrayRemove(nick)).addOnFailureListener {
+            _isError.value=it.localizedMessage
+        }
     }
 }

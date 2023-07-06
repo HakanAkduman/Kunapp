@@ -46,6 +46,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -77,165 +78,147 @@ fun PostScreen(nick:String?,navController: NavController,loginNavController: Nav
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun PostScreenGenerate(navController: NavController,nick: String?,loginNavController: NavController,viewModel: PostScreenViewModel){
-
+private fun PostScreenGenerate(navController: NavController, nick: String?, loginNavController: NavController, viewModel: PostScreenViewModel) {
 
     val isLoading by viewModel.isLoading.observeAsState(false)
     val isSuccess by viewModel.isSuccess.observeAsState(listOf())
     val isError by viewModel.isError.observeAsState("")
     val searchItems by viewModel.searchList.observeAsState(initial = listOf())
+    var prevError by remember { mutableStateOf("") }
 
-    var search by remember{
+    var search by remember {
         mutableStateOf("")
     }
 
-    var clickedIndex by remember{
+    var clickedIndex by remember {
         mutableStateOf(0)
     }
-    var postList by remember{
+    var postList by remember {
         mutableStateOf(listOf<Post>())
     }
-    if (isSuccess.isNotEmpty()){
-
-        postList= viewModel.isSuccess.value!!
-
+    if (isSuccess.isNotEmpty()) {
+        postList = viewModel.isSuccess.value!!
     }
 
+   Box() {
+       Column(modifier = Modifier.fillMaxSize()) {
+           if (isLoading) {
+               Box(
+                   modifier = Modifier
+                       .fillMaxSize()
+                       .background(Color.Black.copy(alpha = 0.5f)),
+                   contentAlignment = Alignment.Center
+               ) {
+                   CircularProgressIndicator(
+                       modifier = Modifier
+                           .size(60.dp)
+                           .padding(16.dp),
+                       color = Color.White
+                   )
+               }
+           }
+           if (isError.isNotEmpty() && prevError != isError) {
+               Toast.makeText(LocalContext.current, isError, Toast.LENGTH_LONG).show()
+               prevError = isError
+           }
 
-
-    Column(modifier = Modifier.fillMaxSize()
-    ) {
-
-        if (isLoading) {//daha sonra loading screen eklenebilir
-
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.5f)),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .size(60.dp)
-                        .padding(16.dp),
-                    color = Color.White
-                )
-            }
-        }
-        if (isError.isNotEmpty()) {
-            Toast.makeText(LocalContext.current, isError, Toast.LENGTH_LONG).show()
-
-        }
-
-
-        Box {
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Button(
-                    onClick = {
-                        clickedIndex = 0
-                        viewModel.getPostsPopular()
-                    },
-                    colors = if (clickedIndex == 0) ButtonDefaults.buttonColors(Color.Red) else ButtonDefaults.buttonColors(
-                        Color.Cyan
-                    )
-                ) {
-                    Text(text = "popüler")
-                }
-
-
-                Box(contentAlignment = Alignment.TopCenter, modifier = Modifier.padding(5.dp)) {
-
-                    OutlinedTextField(
-                        value = search,modifier = Modifier.size(width = 150.dp, height = 35.dp),
-                        onValueChange = {
-                            search= it.lowercase(Locale.UK)
-
-                            viewModel.searchNick(search)
-                        },
-                        label = { Text("Bir hesap ara", fontSize = 10.sp) }
-
-                    )
+           Row(
+               modifier = Modifier
+                   .fillMaxWidth()
+                   .padding(horizontal = 16.dp, vertical = 8.dp),
+               horizontalArrangement = Arrangement.SpaceBetween,
+               verticalAlignment = Alignment.CenterVertically
+           ) {
+               Button(
+                   onClick = {
+                       clickedIndex = 0
+                       viewModel.getPostsPopular()
+                   },
+                   colors = if (clickedIndex == 0) ButtonDefaults.buttonColors(Color.Red) else ButtonDefaults.buttonColors(
+                       Color.Cyan
+                   )
+               ) {
+                   Text(text = "popüler")
+               }
 
 
 
-                    if (searchItems.isNotEmpty()) {
+               Button(
+                   onClick = {
+                       clickedIndex = 1
+                   },
+                   colors = if (clickedIndex == 1) ButtonDefaults.buttonColors(Color.Red) else ButtonDefaults.buttonColors(
+                       Color.Cyan
+                   )
+               ) {
+                   Text(text = "Takipler")
+               }
+           }
 
-                        LazyColumn(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center, modifier = Modifier.padding(top = 35.dp)){
-                            items(searchItems){
-                                searchItem(item = it, navController = navController, userNick = nick?:"nick couldn't found")
-                            }
-                        }
-                    }
+           Box(modifier = Modifier.weight(1f)) {
+               Column {
 
-                }
-                Button(
-                    onClick = {
-                        clickedIndex = 1
-                    },
-                    colors = if (clickedIndex == 1) ButtonDefaults.buttonColors(Color.Red) else ButtonDefaults.buttonColors(
-                        Color.Cyan
-                    )
-                ) {
-                    Text(text = "Takipler")
-                }
-            }
 
-            OutlinedTextField(
-                value = search,
-                onValueChange = {
-                    search = it.lowercase(Locale.UK)
-                    viewModel.searchNick(search)
-                },
-                label = { Text("Bir hesap ara", fontSize = 10.sp) },
-                modifier = Modifier.fillMaxWidth().padding(top = 35.dp, start = 16.dp, end = 16.dp)
-            )
+                   LazyColumn(
+                       modifier = Modifier.weight(1f)
+                   ) {
+                       items(items = postList) { post ->
+                           PostItem(post = post, viewModel = viewModel, nick = nick!!)
+                       }
+                   }
+               }
+           }
+       }
+       Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Top) {
+           OutlinedTextField(
+               value = search,
+                modifier = Modifier.padding(start = 120.dp, end = 120.dp,top=5.dp).size(170.dp,50.dp), textStyle = TextStyle(fontSize = 13.sp),
+               onValueChange = {
+                   search = it.lowercase(Locale.UK)
+                   viewModel.searchNick(search)
+               },
+               label = { Text("Bir hesap ara", fontSize = 10.sp) }
+           )
+           if (searchItems.isNotEmpty()) {
+               LazyColumn(
 
-            if (searchItems.isNotEmpty()) {
-                LazyColumn(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                    modifier = Modifier.padding(top = 35.dp)
-                ) {
-                    items(searchItems) { item ->
-                        searchItem(item = item, navController = navController, userNick = nick ?: "")
-                    }
-                }
-            }
-        }
-
-        Box(modifier = Modifier.weight(1f)) {
-            LazyColumn {
-                items(items = postList) { post ->
-                    PostItem(post = post)
-                }
-            }
-        }
-
-    }
-
+               ) {
+                   items(searchItems) { item ->
+                       SearchItem(item = item, navController = navController, userNick = nick ?: "nick couldn't found")
+                   }
+               }
+           }
+       }
+   }
 }
 
 @Composable
-fun searchItem(item: String, navController: NavController, userNick: String) {
+fun SearchItem(item: String, navController: NavController, userNick: String) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
                 navController.navigate("profile_screen/$userNick/$item")
             }
-            .padding(start = 16.dp, top = 8.dp, bottom = 8.dp)
+            .padding(start = 120.dp, top = 8.dp, bottom = 8.dp, end = 120.dp)
             .border(1.dp, Color.Black, RectangleShape)
+            .background(Color.LightGray)
     ) {
         Text(
             item,
             style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(3.dp)
         )
     }
 }
 
 @Composable
-fun PostItem(post: Post) {
+fun PostItem(post: Post,viewModel: PostScreenViewModel,nick:String) {
+
+    var liked by remember{ mutableStateOf(post.likeList.contains(nick)) }
+    var likeNumber by remember{ mutableStateOf(post.likeList.size) }
+
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -261,8 +244,25 @@ fun PostItem(post: Post) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Button(onClick = { /* TODO: Beğen action */ }) {
-                    Text(text = "Beğen")
+                Button(onClick = {
+                    if(!liked){
+                        viewModel.like(post.id,nick,post.likeList)
+                        likeNumber+=1
+                        liked=true
+                    }else{
+                        viewModel.unLike(post.id,nick,post.likeList)
+                        likeNumber-= 1
+                        liked=false
+                    }
+
+
+                }) {
+                    if(!liked){
+                        Text(text = "($likeNumber) Beğen")
+                    }else{
+                        Text(text = "($likeNumber) Beğenildi")
+                    }
+
                 }
                 Button(onClick = { /* TODO: Yorum action */ }) {
                     Text(text = "Yorum")
