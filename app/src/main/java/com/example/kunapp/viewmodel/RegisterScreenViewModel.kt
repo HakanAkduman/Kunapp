@@ -48,6 +48,7 @@ class RegisterScreenViewModel:ViewModel() {
                             hash.put("email",email)
                             hash.put("followings", listOf<String>())
                             hash.put("chats", listOf<String>())
+                            hash.put("photoUrl","https://firebasestorage.googleapis.com/v0/b/kunapp-17107.appspot.com/o/images%2Fa73d61ed-3154-4f20-b2da-29444fe08057.jpg?alt=media&token=ee6515c6-3303-4d76-a24c-9c1222b0877b")
                             database.collection("Users").add(hash).addOnSuccessListener {
                                 _isLoading.value = false
                                 _isSuccess.value = true

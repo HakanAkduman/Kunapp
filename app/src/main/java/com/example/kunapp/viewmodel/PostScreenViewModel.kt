@@ -90,7 +90,7 @@ class PostScreenViewModel:ViewModel() {
                         var documents=value.documents
                         var list= mutableListOf<String>()
                         for (doc in documents){
-                            list.add(doc.get("nick") as String)
+                            list.add((doc.get("nick") ?:"") as String)
                         }
                         allNicks.value=list
                         searchNick(str)
