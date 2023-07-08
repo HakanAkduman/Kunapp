@@ -1,9 +1,13 @@
 package com.example.kunapp.model
 
 import android.net.Uri
+import java.util.Date
 
 data class MesageRow(
-    val nick:String,
-    val uri: Uri?=null
+    var id:String,
+    var user1: String , var user2: String ,
+    var date: String , var lastMessage:String
+
+
 ) {
 }

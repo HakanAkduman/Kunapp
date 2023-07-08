@@ -99,58 +99,58 @@ private fun NewPostScreenGenerate(nick:String?,navController: NavController,view
 
 
 
-Column(verticalArrangement = Arrangement.Center,
+    Column(verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
-    modifier = Modifier
-        .fillMaxWidth()
-        .fillMaxHeight(0.80F)
-        .padding(vertical = 10.dp, horizontal = 15.dp)) {
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.80F)
+            .padding(vertical = 10.dp, horizontal = 15.dp)) {
 
-    if (isLoading) {//daha sonra loading screen eklenebilir
+        if (isLoading) {//daha sonra loading screen eklenebilir
 
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.5f)),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator(
+            Box(
                 modifier = Modifier
-                    .size(60.dp)
-                    .padding(16.dp),
-                color = Color.White
-            )
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.5f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .size(60.dp)
+                        .padding(16.dp),
+                    color = Color.White
+                )
+            }
         }
-    }
-    if (isError.isNotEmpty()) {
-        Toast.makeText(LocalContext.current, isError, Toast.LENGTH_LONG).show()
+        if (isError.isNotEmpty()) {
+            Toast.makeText(LocalContext.current, isError, Toast.LENGTH_LONG).show()
 
-    }
-    if (!isSuccess.isNullOrBlank()){
-        navController.navigate("post_screen/$nick") {
-            launchSingleTop = true
         }
+        if (!isSuccess.isNullOrBlank()){
+            navController.navigate("post_screen/$nick") {
+                launchSingleTop = true
+            }
+        }
+
+        OutlinedTextField(
+            value = postText,
+            onValueChange = { postText = it },
+            label = { Text(text = "Paylaşmak istediklerinizi girebilirsiniz") },
+            modifier = Modifier.fillMaxWidth()
+        )
+        ImageButton(painter = painter!!,
+            description = "Selected Image",
+            modifier = Modifier.fillMaxSize(0.60F),
+            onClick = pickImageButton
+
+        )
+
+
+        Button(onClick = { viewModel.share(text = postText,photoUri=imageUri.value, nick = nick) }) {
+            Text(text = "Paylaş")
+        }
+
     }
-
-    OutlinedTextField(
-        value = postText,
-        onValueChange = { postText = it },
-        label = { Text(text = "Paylaşmak istediklerinizi girebilirsiniz") },
-        modifier = Modifier.fillMaxWidth()
-    )
-    ImageButton(painter = painter!!,
-        description = "Selected Image",
-        modifier = Modifier.fillMaxSize(0.60F),
-        onClick = pickImageButton
-
-    )
-
-
-    Button(onClick = { viewModel.share(text = postText,photoUri=imageUri.value, nick = nick) }) {
-        Text(text = "Paylaş")
-    }
-
-}
 
 }
 

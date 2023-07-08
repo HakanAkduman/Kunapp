@@ -1,5 +1,6 @@
 package com.example.kunapp.view
 
+import android.widget.ImageButton
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,11 +25,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavArgs
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+
+import androidx.navigation.navArgument
 
 import com.example.kunapp.R
 
@@ -47,6 +51,7 @@ fun MainScreen(nick: String?,navController: NavController){
 private fun MainScreenGenerate(nick:String?,navController: NavController){
 
     val mainNavController = rememberNavController()
+
     var clickedIndex by remember { mutableStateOf(1) }
 
     Scaffold(
@@ -114,6 +119,7 @@ private fun MainScreenGenerate(nick:String?,navController: NavController){
                 }
             }
         }
+
     ) { innerPadding ->
         Column(
             verticalArrangement = Arrangement.SpaceBetween,
@@ -151,6 +157,28 @@ private fun MainScreenGenerate(nick:String?,navController: NavController){
                 ) { backStackEntry ->
                     val newPostNick = backStackEntry.arguments?.getString("nick")
                     NewPostScreen(nick = newPostNick, navController = mainNavController)
+                }
+                composable("chat_screen/{userNick}/{messageID}", arguments = listOf(
+                    navArgument("userNick"){
+                        type= NavType.StringType
+                    } ,
+                    navArgument("messageID"){
+                        type= NavType.StringType
+                    }
+                )){
+                        backStackEntry ->
+                    val userNick = backStackEntry.arguments?.getString("userNick")
+
+                    val messageID = backStackEntry.arguments?.getString("messageID")
+                    ChatScreen(navController = navController, id = messageID, userNick = userNick!!)}
+                composable("message_screen/{userNick}", arguments = listOf(
+                    navArgument("userNick"){
+                        type= NavType.StringType
+                    }
+                )){ backStackEntry ->
+                    val userNick = backStackEntry.arguments?.getString("userNick")
+                    MessagesScreen(navController = navController, userNick = userNick!!)
+
                 }
             }
         }

@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -52,8 +53,12 @@ import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
 import com.example.kunapp.R
+
 import com.example.kunapp.viewmodel.ProfileScreenViewModel
 import com.google.firebase.auth.FirebaseAuth
+
+
+import com.example.kunapp.viewmodel.ChatScreenViewModel
 
 
 @Composable
@@ -98,6 +103,7 @@ private fun ProfileScreenGenerate(
             imageLoader.enqueue(request)
             imageUri.value?.let {
                 viewModel.refLogo(imageUri.value!!, userNick!!)
+
             }
         }
     )
@@ -124,7 +130,9 @@ private fun ProfileScreenGenerate(
                         .size(35.dp)
                         .border(BorderStroke(0.dp, Color.Transparent), CircleShape),
                     painter = painterResource(id = R.drawable.message_icon),
-                    onClick = { /* Open messages */ }
+                    onClick = {
+                        navController.navigate("message_screen/$userNick")
+                    }
                 )
             }
         }
@@ -193,9 +201,6 @@ private fun ProfileScreenGenerate(
 }
 
 
-fun openMessages() {
-    // Mesajlar ekranını açmak için gerekli işlemler
-}
 
 
 
