@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,11 +38,11 @@ import com.example.kunapp.viewmodel.MessageScreenViewModel
 @Composable
 fun MessagesScreen(navController: NavController,userNick:String,viewModel: MessageScreenViewModel = remember{ MessageScreenViewModel() }) {
     viewModel.loadMessages(userNick)
-    MessageScreenGenerate(userNick=userNick, viewModel = viewModel)
+    MessageScreenGenerate(navController = navController,userNick=userNick, viewModel = viewModel)
 }
 
 @Composable
-fun MessageScreenGenerate(userNick:String,viewModel: MessageScreenViewModel
+fun MessageScreenGenerate(navController: NavController,userNick:String,viewModel: MessageScreenViewModel
 
 ) {
     val isSucces=viewModel.isSuccess.observeAsState(listOf<MesageRow>())
@@ -62,7 +63,7 @@ fun MessageScreenGenerate(userNick:String,viewModel: MessageScreenViewModel
         LazyColumn{
 
            items(items = isSucces.value){
-                UserEachRow(mesageRow = it, userNick = userNick)
+                UserEachRow(mesageRow = it, userNick = userNick, navController = navController)
             }
         }
 
@@ -70,14 +71,14 @@ fun MessageScreenGenerate(userNick:String,viewModel: MessageScreenViewModel
 }
 
 @Composable
-fun UserEachRow(mesageRow: MesageRow,userNick: String// chat screen e gidecek navConcontroller
+fun UserEachRow(mesageRow: MesageRow,userNick: String,navController: NavController
 ) {
 
 Row (modifier = Modifier
     .padding(vertical = 1.dp)
     .padding(start = 2.dp)
     .clickable {
-        navController.navigate("chat_screen/${mesageRow.id}")
+        navController.navigate("chat_screen/$userNick/${mesageRow.id}")
     }
 ){
     Image(painter = rememberAsyncImagePainter(model = mesageRow.profileUrl), contentDescription ="person" , modifier = Modifier
@@ -96,12 +97,12 @@ Row (modifier = Modifier
                 .padding(start = 4.dp), fontSize = 25.sp
 
         )
-        Text(text = mesageRow.list.get(mesageRow.list.size-1).get("message")!!, modifier = Modifier
+        Text(text = mesageRow.lastMessage, modifier = Modifier
             .padding(vertical = 2.dp)
             .padding(start = 4.dp), fontSize = 20.sp)
     }
     Spacer(modifier = Modifier.padding(end = 100.dp))
-    Text(text = mesageRow.list.get(mesageRow.list.size-1).get("date")!!, modifier = Modifier)
+    Text(text = mesageRow.date, modifier = Modifier)
 
 
 
@@ -113,6 +114,8 @@ Row (modifier = Modifier
 @Preview(showSystemUi = true)
 @Composable
 fun MessageScreen() {
-   MessageScreenGenerate("", MessageScreenViewModel())
+   MessageScreenGenerate(userNick = "", viewModel = MessageScreenViewModel(), navController = NavController(
+       LocalContext.current)
+   )
 }
 

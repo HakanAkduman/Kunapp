@@ -23,6 +23,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -40,19 +41,28 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.kunapp.R
 import com.example.kunapp.model.MesageRow
+import com.example.kunapp.model.Message
 import com.example.kunapp.viewmodel.ChatScreenViewModel
 
 
 @Composable
-fun ChatScreen(id:String,navController: NavController,userNick:String,viewModel: ChatScreenViewModel=remember{ ChatScreenViewModel() }) {
-    viewModel.open()
-    ChatScreenGenerate(userNick = userNick, viewModel = viewModel)
+fun ChatScreen(id : String?,navController: NavController,userNick:String,viewModel: ChatScreenViewModel=remember{ ChatScreenViewModel() }) {
+   id.let {
+       viewModel.openMessages(id!!)
+   }
+
+
+    ChatScreenGenerate(userNick = userNick, viewModel = viewModel
+    )
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreenGenerate(userNick:String,viewModel: ChatScreenViewModel
-) {
+)
+{
+    val issucces by viewModel.isSuccess.observeAsState(listOf())
 
 
 
@@ -60,8 +70,8 @@ fun ChatScreenGenerate(userNick:String,viewModel: ChatScreenViewModel
         modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceBetween
     ) {
         LazyColumn() {
-            items(items=listOf<MesageRow>()){
-                MesageBox(message = it, userNick = )
+            items(items=issucces){
+                MesageBox(message = it, userNick =userNick )
           }
         }
         Text_Field()
@@ -72,36 +82,17 @@ fun ChatScreenGenerate(userNick:String,viewModel: ChatScreenViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MesageBox(message:MesageRow,userNick: String) {
+fun MesageBox(message:Message,userNick: String) {
 
-    Row(modifier = Modifier.padding(all = 8.dp)) {
-        Image(
-            painter = painterResource(id = R.drawable.user),
-            contentDescription = "profile",
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .border(15.dp, Color(color = 2), CircleShape)
-
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Column(modifier = Modifier) {
-            Surface(
-                modifier = Modifier.background(color = LightGray),
-                shape = MaterialTheme.shapes.large,
-            ) {
-                Text(
-                    modifier = Modifier
-                        .padding(vertical = 7.dp)
-                        .padding(5.dp),
-                    text = "hello dear how are u",
-                    style = MaterialTheme.typography.bodyLarge
-                )
-
-            }
+    Row(modifier = Modifier.padding(all = 8.dp).fillMaxWidth()) {
+        Text(text = message.message,
+        textAlign = if (message.sender==userNick) TextAlign.Right else TextAlign.Left
+            )
 
 
-        }
+
+
+
     }
 
 }

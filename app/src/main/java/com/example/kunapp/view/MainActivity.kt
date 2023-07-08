@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavArgs
 import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -51,12 +52,26 @@ Column(verticalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillM
         composable("post_screen"){ PostScreen(navController = mainNavController)}
         composable("profile_screen"){ ProfileScreen(navController = mainNavController)}
         composable("new_post_screen"){ NewPostScreen(navController = mainNavController)}
-        composable("chat_screen"){ ChatScreen(navController = navController)}
-        composable("message_screen/{userNick}",NavArgs(
+        composable("chat_screen/{userNick}/{messageID}", arguments = listOf(
             navArgument("userNick"){
-                            }
+                type= NavType.StringType
+            } ,
+             navArgument("messageID"){
+                type= NavType.StringType
+            }
         )){
-            MessagesScreen(navController = navController, userNick = nick!!)
+                backStackEntry ->
+            val userNick = backStackEntry.arguments?.getString("userNick")
+
+            val messageID = backStackEntry.arguments?.getString("messageID")
+            ChatScreen(navController = navController, id = messageID, userNick = userNick!!)}
+        composable("message_screen/{userNick}", arguments = listOf(
+            navArgument("userNick"){
+                type= NavType.StringType
+            }
+        )){ backStackEntry ->
+            val userNick = backStackEntry.arguments?.getString("userNick")
+            MessagesScreen(navController = navController, userNick = userNick!!)
         }
     }
     Row(verticalAlignment = Alignment.Bottom, modifier = Modifier

@@ -58,6 +58,7 @@ private fun ProfileScreenGenerate(navController: NavController,viewModel:ChatScr
             CircularProgressIndicator()
         }
     }
+
     Column(modifier = Modifier.fillMaxSize()) {
         Row(
             modifier = Modifier
@@ -71,7 +72,7 @@ private fun ProfileScreenGenerate(navController: NavController,viewModel:ChatScr
                     .border(BorderStroke(0.dp, Color.Transparent), CircleShape),
                 drawableToDraw = R.drawable.message_icon
             ) {
-                viewModel.openMessages(nick)
+                navController.navigate("message_screen/$nick")
             }
         }
         Row(modifier = Modifier.padding(top = 50.dp, start = 20.dp, end = 20.dp, bottom = 50.dp)) {
