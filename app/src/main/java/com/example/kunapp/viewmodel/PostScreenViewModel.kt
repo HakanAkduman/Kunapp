@@ -111,4 +111,12 @@ class PostScreenViewModel:ViewModel() {
             _isError.value=it.localizedMessage
         }
     }
+    fun shareComment(id:String,nick:String,comment:String){
+        val commentHashMap=HashMap<String,String>()
+        commentHashMap.put("nick",nick)
+        commentHashMap.put("commenttext",comment)
+        database.document("Post/$id").update("commentlist",FieldValue.arrayUnion(commentHashMap)).addOnFailureListener {
+            _isError.value=it.localizedMessage
+        }
+    }
 }
