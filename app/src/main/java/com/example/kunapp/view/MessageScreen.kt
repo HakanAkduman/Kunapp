@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -36,19 +37,24 @@ import com.example.kunapp.viewmodel.MessageScreenViewModel
 
 
 @Composable
-fun MessagesScreen(navController: NavController,userNick:String,viewModel: MessageScreenViewModel = remember{ MessageScreenViewModel() }) {
+fun MessagesScreen(
+    navController: NavController,
+    userNick: String,
+    viewModel: MessageScreenViewModel = remember { MessageScreenViewModel() }
+) {
     viewModel.loadMessages(userNick)
-    MessageScreenGenerate(navController = navController,userNick=userNick, viewModel = viewModel)
+    MessageScreenGenerate(navController = navController, userNick = userNick, viewModel = viewModel)
 }
 
 @Composable
-fun MessageScreenGenerate(navController: NavController,userNick:String,viewModel: MessageScreenViewModel
+fun MessageScreenGenerate(
+    navController: NavController, userNick: String, viewModel: MessageScreenViewModel
 
 ) {
     println("screen generated")
-    val isSucces=viewModel.isSuccess.observeAsState(listOf<MesageRow>())
-    val isLoading=viewModel.isLoading.observeAsState()
-    val isError= viewModel.isError.observeAsState()
+    val isSucces = viewModel.isSuccess.observeAsState(listOf<MesageRow>())
+    val isLoading = viewModel.isLoading.observeAsState()
+    val isError = viewModel.isError.observeAsState()
 
     Box(
         modifier = Modifier
@@ -56,14 +62,13 @@ fun MessageScreenGenerate(navController: NavController,userNick:String,viewModel
                 Color.Gray,
 
                 )
-            .width(90.dp)
-            .height(5.dp)
+            .fillMaxSize()
             .padding(top = 30.dp)
 
     ) {
-        LazyColumn{
+        LazyColumn {
 
-           items(items = isSucces.value){
+            items(items = isSucces.value) {
                 UserEachRow(mesageRow = it, userNick = userNick, navController = navController)
             }
         }
@@ -72,48 +77,50 @@ fun MessageScreenGenerate(navController: NavController,userNick:String,viewModel
 }
 
 @Composable
-fun UserEachRow(mesageRow: MesageRow,userNick: String,navController: NavController
+fun UserEachRow(
+    mesageRow: MesageRow, userNick: String, navController: NavController
 ) {
-println("user each row has worked")
-Row (modifier = Modifier
-    .padding(vertical = 10.dp)
-    .padding(start = 2.dp)
-    .clickable {
-        navController.navigate("chat_screen/$userNick/${mesageRow.id}")
+    println("user each row has worked")
+    Row(modifier = Modifier
+        .padding(vertical = 10.dp)
+        .padding(start = 2.dp)
+        .clickable {
+            navController.navigate("chat_screen/$userNick/${mesageRow.id}")
+        }
+    ) {
+
+        Column() {
+            Text(
+                text = when (userNick) {
+                    mesageRow.user1 -> mesageRow.user2!!
+                    mesageRow.user2 -> mesageRow.user1!!
+                    else -> mesageRow.user1!!
+                }, modifier = Modifier
+                    .padding(vertical = 1.dp)
+                    .padding(start = 4.dp), fontSize = 25.sp
+
+            )
+            Text(
+                text = mesageRow.lastMessage, modifier = Modifier
+                    .padding(vertical = 2.dp)
+                    .padding(start = 4.dp), fontSize = 20.sp
+            )
+        }
+        Spacer(modifier = Modifier.padding(end = 100.dp))
+        Text(text = mesageRow.date, modifier = Modifier)
+
+
     }
-){
-
-    Column(){
-        Text(
-            text = when(userNick){
-                mesageRow.user1->mesageRow.user2!!
-                mesageRow.user2->mesageRow.user1!!
-                else->mesageRow.user1!!
-                  }
-            , modifier = Modifier
-                .padding(vertical = 1.dp)
-                .padding(start = 4.dp), fontSize = 25.sp
-
-        )
-        Text(text = mesageRow.lastMessage, modifier = Modifier
-            .padding(vertical = 2.dp)
-            .padding(start = 4.dp), fontSize = 20.sp)
-    }
-    Spacer(modifier = Modifier.padding(end = 100.dp))
-    Text(text = mesageRow.date, modifier = Modifier)
-
-
-
-
-}
 
 }
 
 @Preview(showSystemUi = true)
 @Composable
 fun MessageScreen() {
-   MessageScreenGenerate(userNick = "", viewModel = MessageScreenViewModel(), navController = NavController(
-       LocalContext.current)
-   )
+    MessageScreenGenerate(
+        userNick = "", viewModel = MessageScreenViewModel(), navController = NavController(
+            LocalContext.current
+        )
+    )
 }
 
