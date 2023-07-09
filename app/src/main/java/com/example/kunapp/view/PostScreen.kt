@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialogDefaults.containerColor
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -28,7 +29,10 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.contentColorFor
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -51,8 +55,10 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.example.kunapp.R
 import com.example.kunapp.model.Comment
 import com.example.kunapp.model.Post
+import com.example.kunapp.ui.theme.SoftBlue
 import com.example.kunapp.viewmodel.PostScreenViewModel
 import com.google.firebase.analytics.FirebaseAnalytics
 import java.util.Collections.addAll
@@ -158,7 +164,7 @@ private fun PostScreenGenerate(navController: NavController, nick: String?, logi
                        modifier = Modifier.weight(1f)
                    ) {
                        items(items = postList) { post ->
-                           PostItem(post = post, viewModel = viewModel, nick = nick!!)
+                           PostItem(post = post, viewModel = viewModel, nick = nick!!, navController = navController)
                        }
                    }
                }
@@ -231,7 +237,7 @@ fun PostDialog(
             var liked by remember { mutableStateOf(post.likeList.contains(nick)) }
             var likeNumber by remember { mutableStateOf(post.likeList.size) }
 
-            Card(
+            Card(colors = CardDefaults.cardColors(containerColor = SoftBlue),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 12.dp, vertical = 7.dp),
@@ -275,7 +281,9 @@ fun PostDialog(
                         }
                     }
                     LazyColumn(
-                        modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp).size(DpSize(width = 300.dp, height = 270.dp)),
+                        modifier = Modifier
+                            .padding(vertical = 10.dp, horizontal = 20.dp)
+                            .size(DpSize(width = 300.dp, height = 270.dp)),
                         contentPadding = PaddingValues(top = 8.dp)
                     ) {
                         items(commentList) { comment ->
@@ -312,13 +320,13 @@ fun PostDialog(
 fun PostItem(
     post: Post,
     viewModel: PostScreenViewModel,
-    nick: String
+    nick: String,navController:NavController
 ) {
     var liked by remember { mutableStateOf(post.likeList.contains(nick)) }
     var likeNumber by remember { mutableStateOf(post.likeList.size) }
     var commentClicked by remember { mutableStateOf(false) }
 
-    Card(
+    Card(colors = CardDefaults.cardColors(containerColor = SoftBlue),
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 12.dp, vertical = 7.dp),
@@ -326,7 +334,9 @@ fun PostItem(
         elevation = CardDefaults.cardElevation(3.dp)
     ) {
         Column(modifier = Modifier.padding(8.dp)) {
-            Text(text = post.nick, style = MaterialTheme.typography.titleMedium)
+            TextAsButton(text = post.nick, textStyle  = MaterialTheme.typography.titleMedium, color = SoftBlue, modifier = Modifier){
+                navController.navigate("profile_screen/$nick/${post.nick}")
+            }
             Text(
                 text = post.postText,
                 style = MaterialTheme.typography.bodyMedium,
@@ -377,6 +387,14 @@ fun PostItem(
             }
         }
     }
+}
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TextAsButton(modifier:Modifier,text:String,textStyle: TextStyle,color: Color,onClick:()->Unit){
+    Surface(modifier = modifier.background(color), onClick = onClick) {
+        Text(text = text,modifier=Modifier.background(color), style = textStyle)
+    }
+
 }
 @Preview(showSystemUi = true,showBackground = true)
 @Composable

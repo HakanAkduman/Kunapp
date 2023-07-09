@@ -80,7 +80,6 @@ fun MessageScreenGenerate(
 fun UserEachRow(
     mesageRow: MesageRow, userNick: String, navController: NavController
 ) {
-    println("user each row has worked")
     Row(modifier = Modifier
         .padding(vertical = 10.dp)
         .padding(start = 2.dp)
@@ -107,7 +106,7 @@ fun UserEachRow(
             )
         }
         Spacer(modifier = Modifier.padding(end = 100.dp))
-        Text(text = mesageRow.date, modifier = Modifier)
+        Text(text = mesageRow.date.toDate().toString(), modifier = Modifier)
 
 
     }

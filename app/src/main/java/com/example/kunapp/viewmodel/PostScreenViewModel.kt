@@ -119,4 +119,5 @@ class PostScreenViewModel:ViewModel() {
             _isError.value=it.localizedMessage
         }
     }
+
 }

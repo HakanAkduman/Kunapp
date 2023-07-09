@@ -81,10 +81,20 @@ private fun ProfileScreenGenerate(
 ) {
     viewModel.controlFollowings(userNick!!,profileNick!!)
     val isLoading by viewModel.isLoading.observeAsState(false)
-    val isSuccess by viewModel.isSuccess.observeAsState(false)
+    val isSuccess by viewModel.isSuccess.observeAsState("notFollowed")
     val isError by viewModel.isError.observeAsState("")
     val logo by viewModel.logoUrl.observeAsState("https://firebasestorage.googleapis.com/v0/b/kunapp-17107.appspot.com/o/images%2Fa73d61ed-3154-4f20-b2da-29444fe08057.jpg?alt=media&token=ee6515c6-3303-4d76-a24c-9c1222b0877b")
     var follow by remember { mutableStateOf(false) }
+
+    if (isSuccess!="notFollowed"&&isSuccess!="followed"){
+        if(isSuccess=="newChat"){
+            viewModel.startNewChat(userNick,profileNick)
+        }else{
+            navController.navigate("chat_screen/$userNick/$isSuccess"){
+                launchSingleTop=true
+            }
+        }
+    }
 
     val imageUri = remember { mutableStateOf<Uri?>(null) }
     val imageLoader = ImageLoader(LocalContext.current)
@@ -112,7 +122,7 @@ private fun ProfileScreenGenerate(
         pickImageLauncher.launch("image/*")
     }
 
-    follow = isSuccess
+    follow = if(isSuccess=="notFollowed") false else if(isSuccess=="followed") true else false
 
     val nick by remember { mutableStateOf(profileNick) }
     val editable = userNick == profileNick
@@ -192,6 +202,18 @@ private fun ProfileScreenGenerate(
                         } else {
                             Text(text = "Takip et")
                         }
+                    }
+                    Button(
+                        onClick = {
+                           viewModel.message(userNick,profileNick)
+                        },
+                        modifier = Modifier.width(120.dp)
+                    ) {
+
+                            Text(text = "Mesajlaş")
+
+
+
                     }
                 }
 

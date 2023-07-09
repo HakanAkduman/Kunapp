@@ -28,7 +28,7 @@ class ChatScreenViewModel : ViewModel() {
             .addOnSuccessListener {
 
                 database.document("Chats/$messageId")
-                    .update("date", com.google.firebase.Timestamp.now().toString())
+                    .update("date", com.google.firebase.Timestamp.now())
                     .addOnFailureListener {
                         _isError.value = it.localizedMessage
                     }.addOnSuccessListener {
@@ -43,10 +43,10 @@ class ChatScreenViewModel : ViewModel() {
         _isLoading.value = true
         database.document("Chats/$id").get().addOnSuccessListener {
             if (it != null) {
-                val list = it.get("chat") as? List<HashMap<String, String>>
+                val list = it.get("chat") as List<HashMap<String, String>>
                 val messagelist = mutableListOf<Message>()
                 list.let {
-                    for (doc in list!!) {
+                    for (doc in list) {
                         val message = Message(doc.get("sender")!!, doc.get("message")!!)
 
                         messagelist.add(message)
