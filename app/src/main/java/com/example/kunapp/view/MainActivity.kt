@@ -170,14 +170,14 @@ private fun MainScreenGenerate(nick:String?,navController: NavController){
                     val userNick = backStackEntry.arguments?.getString("userNick")
 
                     val messageID = backStackEntry.arguments?.getString("messageID")
-                    ChatScreen(navController = navController, id = messageID, userNick = userNick!!)}
+                    ChatScreen(navController = mainNavController, id = messageID, userNick = userNick!!)}
                 composable("message_screen/{userNick}", arguments = listOf(
                     navArgument("userNick"){
                         type= NavType.StringType
                     }
                 )){ backStackEntry ->
                     val userNick = backStackEntry.arguments?.getString("userNick")
-                    MessagesScreen(navController = navController, userNick = userNick!!)
+                    MessagesScreen(navController = mainNavController, userNick = userNick!!)
 
                 }
             }

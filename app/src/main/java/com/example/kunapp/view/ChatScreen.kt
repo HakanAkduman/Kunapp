@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -34,6 +35,7 @@ import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.graphics.Color.Companion.LightGray
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,22 +49,28 @@ import com.example.kunapp.viewmodel.ChatScreenViewModel
 
 
 @Composable
-fun ChatScreen(id : String?,navController: NavController,userNick:String,viewModel: ChatScreenViewModel=remember{ ChatScreenViewModel() }) {
-   id.let {
-       viewModel.openMessages(id!!)
-   }
+fun ChatScreen(
+    id: String?,
+    navController: NavController,
+    userNick: String,
+    viewModel: ChatScreenViewModel = remember { ChatScreenViewModel() }
+) {
+    id.let {
+        viewModel.openMessages(id!!)
+    }
 
 
-    ChatScreenGenerate(userNick = userNick, viewModel = viewModel
+    ChatScreenGenerate(
+        userNick = userNick, viewModel = viewModel,id
     )
 
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatScreenGenerate(userNick:String,viewModel: ChatScreenViewModel
-)
-{
+fun ChatScreenGenerate(
+    userNick: String, viewModel: ChatScreenViewModel,id: String?
+) {
     val issucces by viewModel.isSuccess.observeAsState(listOf())
 
 
@@ -71,11 +79,14 @@ fun ChatScreenGenerate(userNick:String,viewModel: ChatScreenViewModel
         modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceBetween
     ) {
         LazyColumn() {
-            items(items=issucces){
-                MesageBox(message = it, userNick =userNick )
-          }
+            items(items = issucces) {
+                MesageBox(message = it, userNick = userNick)
+            }
         }
-        Text_Field()
+
+        Text_Field(viewModel,userNick, messageId = id!! ){
+
+        }
     }
 
 
@@ -83,17 +94,18 @@ fun ChatScreenGenerate(userNick:String,viewModel: ChatScreenViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MesageBox(message:Message,userNick: String) {
+fun MesageBox(message: Message, userNick: String) {
 
-    Row(modifier = Modifier
-        .padding(all = 8.dp)
-        .fillMaxWidth()) {
-        Text(text = message.message,
-        textAlign = if (message.sender==userNick) TextAlign.Right else TextAlign.Left
-        )
+    Row(
+        horizontalArrangement = if (message.sender == userNick) Arrangement.End else Arrangement.Start,
+        modifier = Modifier
+            .padding(all = 8.dp)
+            .fillMaxWidth()
+    ) {
+        Text(
+            text = message.message,
 
-
-
+            )
 
 
     }
@@ -101,26 +113,15 @@ fun MesageBox(message:Message,userNick: String) {
 }
 
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Text_Field() {
+fun Text_Field(viewModel: ChatScreenViewModel,userNick: String,messageId:String,addMessageList:(String)->Unit) {
     var send_message by remember { mutableStateOf("") }
     Row(modifier = Modifier.padding(bottom = 5.dp)) {
-        TextField(
+        OutlinedTextField(
             modifier = Modifier.fillMaxWidth(0.85f),
-            value = send_message, onValueChange = { (it) },
-            placeholder = {
-                Text(
-                    modifier = Modifier.padding(start = 8.dp),
-                    text = "Selam Naber",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        color = Color.Black
-                    ),
-                    textAlign = TextAlign.Center
-                )
-            },
+            value = send_message, onValueChange = { send_message = it },
+            placeholder = { Text(text = "message...") },
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = Gray,
                 unfocusedIndicatorColor = Color.Transparent,
@@ -134,14 +135,18 @@ fun Text_Field() {
                 .size(50.dp)
                 .padding(top = 5.dp), painter = painterResource(id = R.drawable.send_m)
         ) {
+            if (send_message.isNotBlank()) {
+      viewModel.sendMessage(userNick,send_message,messageId)
+                addMessageList(send_message)
+                send_message=""
 
+
+            }
         }
     }
 
 
 }
-
-
 
 
 @Preview(showSystemUi = true)
