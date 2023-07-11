@@ -104,6 +104,8 @@ private fun PostScreenGenerate(navController: NavController, nick: String?, logi
    Box() {
        Column(modifier = Modifier.fillMaxSize()) {
            if (isLoading) {
+               prevError=""
+
                Box(
                    modifier = Modifier
                        .fillMaxSize()
@@ -147,6 +149,7 @@ private fun PostScreenGenerate(navController: NavController, nick: String?, logi
                Button(
                    onClick = {
                        clickedIndex = 1
+                       viewModel.getPostsFollowings(nick!!)
                    },
                    colors = if (clickedIndex == 1) ButtonDefaults.buttonColors(Color.Red) else ButtonDefaults.buttonColors(
                        Color.Cyan

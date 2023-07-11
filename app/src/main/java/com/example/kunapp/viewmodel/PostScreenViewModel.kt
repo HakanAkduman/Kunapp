@@ -67,12 +67,64 @@ class PostScreenViewModel:ViewModel() {
                 _isLoading.value=false
                 _isError.value=error!!.localizedMessage
                 _isError.value=""
+
             }
         }
 
     }
-    fun getPostsFollowings(){
+    fun getPostsFollowings(nick: String) {
+        _isLoading.value = true
 
+        database.collection("Users").whereEqualTo("nick", nick).addSnapshotListener { userValue, userError ->
+            if (userError == null) {
+                val followList = userValue?.documents?.get(0)?.get("followings") as? List<String>
+                if (followList != null) {
+                    database.collection("Post").whereIn("nick", followList).addSnapshotListener { postValue, postError ->
+                        if (postError == null) {
+                            if (postValue != null && !postValue.isEmpty) {
+                                val documents = postValue.documents
+                                val list = mutableListOf<Post>()
+                                for (doc in documents) {
+                                    val commentList = mutableListOf<Comment>()
+                                    val hashList = doc.get("commentlist") as? List<HashMap<String, String>>
+                                    if (hashList != null) {
+                                        for (hash in hashList) {
+                                            val comment = Comment(
+                                                hash["nick"] ?: "Nick bulunamadı",
+                                                hash["commenttext"] ?: "text bulunamadı"
+                                            )
+                                            commentList.add(comment)
+                                        }
+                                    }
+                                    val post = Post(
+                                        doc.id,
+                                        doc.getString("nick") ?: "",
+                                        doc.getString("posttext") ?: "",
+                                        doc.getString("url") ?: "",
+                                        doc.get("likelist") as? List<String> ?: emptyList(),
+                                        commentList
+                                    )
+                                    list.add(post)
+                                }
+                                _isLoading.value = false
+                                _isSuccess.value = list
+                            } else {
+                                _isLoading.value = false
+                                _isError.value = "There is nothing to show"
+                            }
+                        } else {
+                            _isLoading.value = false
+                            _isError.value = postError.localizedMessage
+                            _isError.value = ""
+                        }
+                    }
+                }
+            } else {
+                _isLoading.value = false
+                _isError.value = userError.localizedMessage
+                _isError.value = ""
+            }
+        }
     }
     fun searchNick(str:String){
         if (str.isBlank()){
