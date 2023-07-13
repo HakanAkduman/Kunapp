@@ -11,6 +11,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firestore.v1.Document
 import java.util.UUID
@@ -58,7 +59,7 @@ class ProfileScreenViewModel:ViewModel(){
                 _isError.value = ""
             }
         }
-        database.collection("Post").whereEqualTo("nick",profileNick).addSnapshotListener { value, error ->
+        database.collection("Post").whereEqualTo("nick",profileNick).orderBy("date", Query.Direction.DESCENDING).addSnapshotListener { value, error ->
             if (error==null){
                 if(value!=null&&!value.isEmpty){
                     var documents=value.documents

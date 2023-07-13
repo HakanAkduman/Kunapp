@@ -24,6 +24,7 @@ import androidx.compose.material3.AlertDialogDefaults.containerColor
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -290,8 +291,11 @@ fun PostDialog(
                         contentPadding = PaddingValues(top = 8.dp)
                     ) {
                         items(commentList) { comment ->
-                            Text(text = comment.nick)
-                            Text(text = comment.commentText)
+                            Card(modifier = Modifier.padding(5.dp),elevation = CardDefaults.cardElevation(3.dp), colors = CardDefaults.cardColors(containerColor = Color.LightGray)) {
+                                Text(text = comment.nick, modifier = Modifier.padding(start = 7.dp))
+                                Text(text = comment.commentText,modifier = Modifier.padding(3.dp))
+                            }
+
                         }
                     }
                     Row(modifier = Modifier.fillMaxWidth()) {
