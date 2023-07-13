@@ -4,7 +4,9 @@ import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.kunapp.model.Comment
 import com.example.kunapp.model.MesageRow
+import com.example.kunapp.model.Post
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
@@ -16,12 +18,14 @@ import java.util.UUID
 class ProfileScreenViewModel:ViewModel(){
     private val _isLoading = MutableLiveData(false)
     private val _isSuccess = MutableLiveData("notFollowed")
+    private val _posts = MutableLiveData(listOf<Post>())
     private val _isError = MutableLiveData("")
     private val _logoUrl = MutableLiveData("https://firebasestorage.googleapis.com/v0/b/kunapp-17107.appspot.com/o/images%2Fa73d61ed-3154-4f20-b2da-29444fe08057.jpg?alt=media&token=ee6515c6-3303-4d76-a24c-9c1222b0877b")
 
 
     val isLoading: LiveData<Boolean> = _isLoading
     val isSuccess: LiveData<String> = _isSuccess
+    val posts: LiveData<List<Post>> = _posts
     val isError: LiveData<String> = _isError
     val logoUrl: LiveData<String> = _logoUrl
 
@@ -50,6 +54,40 @@ class ProfileScreenViewModel:ViewModel(){
 
             }else{
                 _isLoading.value=false
+                _isError.value=error?.localizedMessage
+                _isError.value = ""
+            }
+        }
+        database.collection("Post").whereEqualTo("nick",profileNick).addSnapshotListener { value, error ->
+            if (error==null){
+                if(value!=null&&!value.isEmpty){
+                    var documents=value.documents
+                    var list= mutableListOf<Post>()
+                    for (doc in documents){
+                        var commentList= mutableListOf<Comment>()
+                        var hashList=doc.get("commentlist") as List<HashMap<String,String>>
+                        for(hash in hashList){
+                            var comment= Comment(hash.get("nick")?:"Nick bulunamadı",hash.get("commenttext")?:"text bulunamadı")
+                            commentList.add(comment)
+                        }
+                        var post=Post(
+                            doc.id,
+                            doc.get("nick") as String,
+                            doc.get("posttext")as String,
+                            doc.get("url") as String,
+                            doc.get("likelist") as List<String>,
+                            commentList
+
+                        )
+
+                        list.add(post)
+                    }
+                    _posts.value=list
+
+
+
+                }
+            }else{
                 _isError.value=error?.localizedMessage
                 _isError.value = ""
             }

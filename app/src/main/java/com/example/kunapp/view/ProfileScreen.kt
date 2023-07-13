@@ -21,6 +21,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -53,12 +55,14 @@ import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
 import com.example.kunapp.R
+import com.example.kunapp.model.Post
 
 import com.example.kunapp.viewmodel.ProfileScreenViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 
 import com.example.kunapp.viewmodel.ChatScreenViewModel
+import com.example.kunapp.viewmodel.PostScreenViewModel
 
 
 @Composable
@@ -83,6 +87,7 @@ private fun ProfileScreenGenerate(
     val isLoading by viewModel.isLoading.observeAsState(false)
     val isSuccess by viewModel.isSuccess.observeAsState("notFollowed")
     val isError by viewModel.isError.observeAsState("")
+    val postList by viewModel.posts.observeAsState(listOf<Post>())
     val logo by viewModel.logoUrl.observeAsState("https://firebasestorage.googleapis.com/v0/b/kunapp-17107.appspot.com/o/images%2Fa73d61ed-3154-4f20-b2da-29444fe08057.jpg?alt=media&token=ee6515c6-3303-4d76-a24c-9c1222b0877b")
     var follow by remember { mutableStateOf(false) }
 
@@ -157,7 +162,9 @@ private fun ProfileScreenGenerate(
                 Image(
                     painter = rememberAsyncImagePainter(logo),
                     contentDescription = "Profile Picture",
-                    modifier = Modifier.fillMaxSize().border(0.dp,Color.Black, CircleShape),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .border(0.dp, Color.Black, CircleShape),
                     contentScale = ContentScale.Crop,
                 )
             }
@@ -219,6 +226,15 @@ private fun ProfileScreenGenerate(
 
             }
         }
+
+        if(postList.isNotEmpty()){
+            LazyColumn(){
+                items(postList){
+                    PostItem(post = it, viewModel = PostScreenViewModel() , nick = userNick, navController =navController )
+                }
+            }
+        }
+
     }
 }
 
