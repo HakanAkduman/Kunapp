@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
@@ -78,38 +79,43 @@ fun MessageScreenGenerate(
 
 @Composable
 fun UserEachRow(
-    mesageRow: MesageRow, userNick: String, navController: NavController
+    mesageRow: MesageRow,
+    userNick: String,
+    navController: NavController
 ) {
-    Row(modifier = Modifier
-        .padding(vertical = 10.dp)
-        .padding(start = 2.dp)
-        .clickable {
-            navController.navigate("chat_screen/$userNick/${mesageRow.id}")
-        }
-    ) {
+   Card(modifier = Modifier.padding(vertical=10.dp)) {
+       Column(modifier = Modifier
+           .padding(vertical = 10.dp)
+           .padding(start = 2.dp)
+           .clickable {
+               navController.navigate("chat_screen/$userNick/${mesageRow.id}")
+           }
+       ) {
 
-        Column() {
-            Text(
-                text = when (userNick) {
-                    mesageRow.user1 -> mesageRow.user2!!
-                    mesageRow.user2 -> mesageRow.user1!!
-                    else -> mesageRow.user1!!
-                }, modifier = Modifier
-                    .padding(vertical = 1.dp)
-                    .padding(start = 4.dp), fontSize = 25.sp
+           Row() {
+               Text(
+                   text = when (userNick) {
+                       mesageRow.user1 -> mesageRow.user2!!
+                       mesageRow.user2 -> mesageRow.user1!!
+                       else -> mesageRow.user1!!
+                   }, modifier = Modifier
+                       .padding(vertical = 1.dp)
+                       .padding(start = 4.dp).weight(1f), fontSize = 25.sp
 
-            )
-            Text(
-                text = mesageRow.lastMessage, modifier = Modifier
-                    .padding(vertical = 2.dp)
-                    .padding(start = 4.dp), fontSize = 20.sp
-            )
-        }
-        Spacer(modifier = Modifier.padding(end = 100.dp))
-        Text(text = mesageRow.date.toDate().toString(), modifier = Modifier)
+               )
+               Text(text = mesageRow.date.toDate().toString(), modifier = Modifier.weight(1f))
+
+           }
+           Text(
+               text = mesageRow.lastMessage, modifier = Modifier
+                   .padding(vertical = 2.dp)
+                   .padding(start = 4.dp), fontSize = 20.sp, maxLines = 1
+           )
 
 
-    }
+
+       }
+   }
 
 }
 
