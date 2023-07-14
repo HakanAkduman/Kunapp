@@ -122,12 +122,12 @@ private fun ProfileScreenGenerate(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(20.dp),
+                    .padding(1.dp),
                 horizontalArrangement = Arrangement.End
             ) {
                 ImageButton(
                     modifier = Modifier
-                        .size(35.dp)
+                        .size(45.dp)
                         .border(BorderStroke(0.dp, Color.Transparent), CircleShape),
                     painter = painterResource(id = R.drawable.message_icon),
                     onClick = {
@@ -137,7 +137,7 @@ private fun ProfileScreenGenerate(
             }
         }
 
-        Row(modifier = Modifier.padding(top = 50.dp, start = 20.dp, end = 20.dp, bottom = 50.dp)) {
+        Row(modifier = Modifier.padding(top = 10.dp, start = 20.dp, end = 20.dp, bottom = 50.dp)) {
             Box(
                 modifier = Modifier
                     .size(100.dp)
