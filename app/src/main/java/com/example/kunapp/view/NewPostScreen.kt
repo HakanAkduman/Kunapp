@@ -140,7 +140,7 @@ private fun NewPostScreenGenerate(nick:String?,navController: NavController,view
         )
         ImageButton(painter = painter!!,
             description = "Selected Image",
-            modifier = Modifier.fillMaxSize(0.60F),
+            modifier = Modifier.fillMaxSize(0.30F),
             onClick = pickImageButton
 
         )
