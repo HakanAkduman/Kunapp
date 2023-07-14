@@ -43,6 +43,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
@@ -128,35 +129,46 @@ private fun PostScreenGenerate(navController: NavController, nick: String?, logi
 
            Row(
                modifier = Modifier
-                   .fillMaxWidth()
-                   .padding(horizontal = 16.dp, vertical = 8.dp),
+                   .fillMaxWidth().
+                       padding(bottom = 10.dp)
+                   ,
                horizontalArrangement = Arrangement.SpaceBetween,
                verticalAlignment = Alignment.CenterVertically
            ) {
-               Button(
-                   onClick = {
-                       clickedIndex = 0
-                       viewModel.getPostsPopular()
-                   },
-                   colors = if (clickedIndex == 0) ButtonDefaults.buttonColors(Color.Red) else ButtonDefaults.buttonColors(
-                       Color.Cyan
-                   )
+               Box(
+                   modifier = Modifier
+                       .size(width = 100.dp, height = 60.dp)
+                       .clip(RoundedCornerShape(bottomEnd = 40.dp))
+                       .background(if (clickedIndex == 0) Color.Red else Color.Cyan)
                ) {
-                   Text(text = "popüler")
+                   Button(
+                       onClick = {
+                           clickedIndex = 0
+                           viewModel.getPostsPopular()
+                       },
+                       colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                       modifier = Modifier.fillMaxSize()
+                   ) {
+                       Text(text = "Popüler")
+                   }
                }
 
-
-
-               Button(
-                   onClick = {
-                       clickedIndex = 1
-                       viewModel.getPostsFollowings(nick!!)
-                   },
-                   colors = if (clickedIndex == 1) ButtonDefaults.buttonColors(Color.Red) else ButtonDefaults.buttonColors(
-                       Color.Cyan
-                   )
+               Box(
+                   modifier = Modifier
+                       .size(width = 100.dp, height = 60.dp)
+                       .clip(RoundedCornerShape(bottomStart = 40.dp))
+                       .background(if (clickedIndex == 1) Color.Red else Color.Cyan)
                ) {
-                   Text(text = "Takipler")
+                   Button(
+                       onClick = {
+                           clickedIndex = 1
+                           viewModel.getPostsFollowings(nick!!)
+                       },
+                       colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                       modifier = Modifier.fillMaxSize()
+                   ) {
+                       Text(text = "Takipler")
+                   }
                }
            }
 
