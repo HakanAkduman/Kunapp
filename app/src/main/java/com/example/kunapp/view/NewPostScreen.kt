@@ -103,7 +103,7 @@ private fun NewPostScreenGenerate(nick:String?,navController: NavController,view
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(0.80F)
+            .fillMaxHeight(1F)
             .padding(vertical = 10.dp, horizontal = 15.dp)) {
 
         if (isLoading) {//daha sonra loading screen eklenebilir
@@ -140,7 +140,7 @@ private fun NewPostScreenGenerate(nick:String?,navController: NavController,view
         )
         ImageButton(painter = painter!!,
             description = "Selected Image",
-            modifier = Modifier.fillMaxSize(0.30F),
+            modifier = Modifier.fillMaxSize(0.60F),
             onClick = pickImageButton
 
         )

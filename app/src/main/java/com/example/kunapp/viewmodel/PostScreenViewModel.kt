@@ -1,5 +1,9 @@
 package com.example.kunapp.viewmodel
 
+import android.util.Log
+import android.widget.Toast
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -124,6 +128,15 @@ class PostScreenViewModel:ViewModel() {
                 _isError.value = userError.localizedMessage
                 _isError.value = ""
             }
+        }
+    }
+
+    fun removePost(id:String){
+        database.document("Post/$id").delete().addOnSuccessListener {
+            _isSuccess.value= listOf()
+            getPostsPopular()
+        }.addOnFailureListener {
+            Log.e("Error",it.localizedMessage)
         }
     }
     fun searchNick(str:String){

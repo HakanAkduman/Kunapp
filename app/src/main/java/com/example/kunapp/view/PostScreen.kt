@@ -47,6 +47,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
@@ -62,6 +63,7 @@ import com.example.kunapp.model.Post
 import com.example.kunapp.ui.theme.SoftBlue
 import com.example.kunapp.viewmodel.PostScreenViewModel
 import com.google.firebase.analytics.FirebaseAnalytics
+import java.nio.file.WatchEvent
 import java.util.Collections.addAll
 import java.util.Locale
 
@@ -341,9 +343,16 @@ fun PostItem(
         elevation = CardDefaults.cardElevation(3.dp)
     ) {
         Column(modifier = Modifier.padding(8.dp)) {
-            TextAsButton(text = post.nick, textStyle  = MaterialTheme.typography.titleMedium, color = SoftBlue, modifier = Modifier){
-                navController.navigate("profile_screen/$nick/${post.nick}")
+            Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.SpaceBetween) {
+                TextAsButton(text = post.nick, textStyle  = MaterialTheme.typography.titleMedium, color = SoftBlue, modifier = Modifier){
+                    navController.navigate("profile_screen/$nick/${post.nick}")
+                }
+               if(nick==post.nick) ImageButton(modifier = Modifier.fillMaxSize(0.09F), painter = painterResource(id = R.drawable.delete_iccon) ) {
+                 viewModel.removePost(post.id)
+                   println("deleting post is work")
+                }
             }
+
             Text(
                 text = post.postText,
                 style = MaterialTheme.typography.bodyMedium,
