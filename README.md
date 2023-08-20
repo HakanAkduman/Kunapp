@@ -10,6 +10,6 @@ MVVM: Model-View-ViewModel design pattern and architecture. It uses a user inter
 
 Coroutines: Asynchronous programming library built into the Kotlin language. It is used to manage network requests, database operations, and long-running transactions.
 
-![kunapp1](https://github.com/HakanAkduman/Kunapp/assets/118764511/50cedf3b-42d5-42fd-b13c-af4f5c325283)
+![kunapp1](https://github.com/HakanAkduman/Kunapp/assets/118764511/60657715-44dd-4145-abbb-b0dfb60484d4)
 
-![kunapp2](https://github.com/HakanAkduman/Kunapp/assets/118764511/0d705397-965c-4dc1-b62c-956bbe512e67)
+![kunapp2](https://github.com/HakanAkduman/Kunapp/assets/118764511/5fb74250-ea29-4ca4-9e44-141f5414af5b)
